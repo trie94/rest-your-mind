@@ -1,0 +1,69 @@
+const webpack = require('webpack');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+module.exports = {
+    entry: ['./index.js'],
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, './dist'),
+        chunkFilename: 'chunks/[id].[chunkhash].js',
+        publicPath: '/'
+    },
+
+    module: {
+        rules: [{
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+            }
+        },
+        {
+            test: /\.html$/,
+            use: {
+                loader: 'html-loader',
+                options: { minimize: true }
+            }
+        },
+        {
+            test: /\.scss$/,
+            use: [
+                "style-loader",
+                "css-loader",
+                "sass-loader"
+            ]
+        },
+        {
+            test: /\.(png|jpg|gif|pdf|ico)$/,
+            use: 'file-loader',
+            options: {
+                name:'[path][name].[ext]'
+            }
+        }]
+    },
+    plugins: [
+        new CleanWebpackPlugin(['dist/*']),
+        new HtmlWebpackPlugin({
+            title: 'Production',
+            template: 'index.html',
+            filename: 'index.html',
+            // favicon: './assets/imgs/favicon.ico'
+        }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin()
+    ],
+
+    optimization: {
+        splitChunks: {
+            chunks: 'all'
+        },
+        minimizer: [
+            new UglifyJsPlugin({
+                sourceMap: true
+            })
+        ]
+    }
+}
