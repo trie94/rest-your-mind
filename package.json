@@ -17,8 +17,7 @@
     "url": "https://github.com/trie94/rest-your-mind/issues"
   },
   "homepage": "https://github.com/trie94/rest-your-mind#readme",
-  "devDependencies": {},
-  "dependencies": {
+  "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
@@ -33,6 +32,9 @@
     "node-sass": "^4.9.3",
     "npm": "^6.4.0",
     "path": "^0.12.7",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-router-dom": "^4.3.1",
     "sass": "^1.12.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.22.1",
@@ -40,5 +42,8 @@
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5",
     "webpack-merge": "^4.1.4"
+  },
+  "dependencies": {
+    "react-unity-webgl": "^7.0.6"
   }
 }

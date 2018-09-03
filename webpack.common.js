@@ -38,9 +38,11 @@ module.exports = {
         },
         {
             test: /\.(png|jpg|gif|pdf|ico)$/,
-            use: 'file-loader',
-            options: {
-                name:'[path][name].[ext]'
+            use: {
+                loader: 'file-loader',
+                options: {
+                    name: '[path][name].[ext]'
+                }
             }
         }]
     },
