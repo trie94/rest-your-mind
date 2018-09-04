@@ -59,7 +59,7 @@ module.exports = {
             // favicon: './assets/imgs/favicon.ico'
         }),
         new CopyWebpackPlugin([
-            {from: 'worlds/**/*', to: 'worlds/[name]'}
+            { from: 'worlds/**/*' }
         ]),
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin()

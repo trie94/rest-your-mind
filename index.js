@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-// import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Unity, { UnityContent } from 'react-unity-webgl';
 import World1 from './worlds/world1/world1';
 
@@ -28,7 +28,7 @@ class Index extends React.Component {
         return(
             <div>
             hi from index
-            < World1 />
+            <World1/>
             </div>
         )
     }
@@ -37,6 +37,10 @@ class Index extends React.Component {
 export default Index;
 
 ReactDom.render(
-    <Index/>,
+    <BrowserRouter>
+    <Switch>
+    <Index/>
+    </Switch>
+    </BrowserRouter>,
     document.getElementById('root')
 );
