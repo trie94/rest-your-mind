@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Unity, { UnityContent } from 'react-unity-webgl';
+
+import Home from './worlds/index/index';
 import World1 from './worlds/world1/world1';
+
+import './style.scss';
 
 if (process.env.NODE_ENV !== 'production') { console.log("dev mode"); }
 
@@ -28,7 +31,6 @@ class Index extends React.Component {
         return(
             <div>
             hi from index
-            <World1/>
             </div>
         )
     }
@@ -39,7 +41,8 @@ export default Index;
 ReactDom.render(
     <BrowserRouter>
     <Switch>
-    <Index/>
+        <Route exact path ='/' component={Home}/>
+        <Route path = '/world1' component={World1}/>
     </Switch>
     </BrowserRouter>,
     document.getElementById('root')

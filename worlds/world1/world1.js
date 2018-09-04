@@ -19,11 +19,9 @@ class World1 extends React.Component {
     }
 
     render(){
-        console.log("unity content", this.unityContent);
-        console.log("hihihihiihihi");
-
         return(
             <div className="world1">
+            world1
             <Unity unityContent={this.unityContent}/>
             </div>
         )
