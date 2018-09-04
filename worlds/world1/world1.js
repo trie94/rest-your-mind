@@ -13,14 +13,15 @@ class World1 extends React.Component {
             }
         );
 
-        this.unityContent.on("loaded", message =>{
+        this.unityContent.on("loaded", message => {
             console.log("unity on!", message);
         });
     }
 
     render(){
         console.log("unity content", this.unityContent);
-        
+        console.log("hihihihiihihi");
+
         return(
             <div className="world1">
             <Unity unityContent={this.unityContent}/>
