@@ -56,7 +56,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'index.html',
             filename: 'index.html',
-            // favicon: './assets/imgs/favicon.ico'
+            favicon: 'favicon.ico'
         }),
         new CopyWebpackPlugin([
             { from: 'worlds/**/*' }
