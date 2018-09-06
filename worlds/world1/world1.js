@@ -1,5 +1,6 @@
 import React from 'react';
 import Unity, { UnityContent, UnityVersion } from 'react-unity-webgl';
+import { Link } from 'react-router-dom';
 
 class World1 extends React.Component {
     constructor(props){
@@ -23,6 +24,7 @@ class World1 extends React.Component {
             <div className="world1">
             world1
             <Unity unityContent={this.unityContent}/>
+            <li><Link to='/'>back to the landing page</Link></li>
             </div>
         )
     }
