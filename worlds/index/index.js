@@ -11,7 +11,7 @@ class Home extends React.Component {
         return(
             <div>
             this is my landing page
-            <p><a href="/world0">GO TO THE WORLD0</a></p>
+            <li><Link to='/world0'>to the world0</Link></li>
             </div>
         )
     }
