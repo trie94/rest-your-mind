@@ -12,5 +12,8 @@ module.exports = merge(common, {
         open: true,
         port: 8080,
         historyApiFallback: true
+    },
+    output:{
+        publicPath: '/'
     }
 });

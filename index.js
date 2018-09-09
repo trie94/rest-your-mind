@@ -8,6 +8,7 @@ import World0 from './worlds/world0/world0';
 import './style.scss';
 
 if (process.env.NODE_ENV !== 'production') { console.log("dev mode"); }
+let basename = process.env.NODE_ENV == 'production' ? "/rest-your-mind" : "/";
 
 if (module.hot) {
     module.hot.accept();
@@ -39,7 +40,7 @@ class Index extends React.Component {
 export default Index;
 
 ReactDom.render(
-    <BrowserRouter>
+    <BrowserRouter basename = {basename}>
     <Switch>
         <Route exact path ='/' component={Home}/>
         <Route path = '/world0' component={World0}/>
