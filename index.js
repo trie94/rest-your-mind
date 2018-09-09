@@ -3,7 +3,7 @@ import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Home from './worlds/index/index';
-import World1 from './worlds/world1/world1';
+import World0 from './worlds/world0/world0';
 
 import './style.scss';
 
@@ -31,6 +31,7 @@ class Index extends React.Component {
         return(
             <div>
             hi from index
+            <p><a href="/world0">GO TO THE WORLD0</a></p>
             </div>
         )
     }
@@ -42,7 +43,7 @@ ReactDom.render(
     <BrowserRouter>
     <Switch>
         <Route exact path ='/' component={Home}/>
-        <Route path = '/world1' component={World1}/>
+        <Route path = '/world0' component={World0}/>
     </Switch>
     </BrowserRouter>,
     document.getElementById('root')
