@@ -30,7 +30,6 @@ class Index extends React.Component {
     render() {
         return(
             <div>
-            hi from index
             <p><a href="/world0">GO TO THE WORLD0</a></p>
             </div>
         )

@@ -10,7 +10,7 @@ class Home extends React.Component {
     render() {
         return(
             <div>
-            this is my landing page
+            Welcome to the Rest Your Mind!
             <li><Link to='/world0'>to the world0</Link></li>
             </div>
         )

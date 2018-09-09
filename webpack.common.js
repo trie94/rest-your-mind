@@ -6,8 +6,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const glob = require('glob');
 
-let files = glob.sync('./worlds/**/*');
-console.log("files in the worlds!: ", files);
+// let files = glob.sync('./worlds/**/*');
+// console.log("files in the worlds!: ", files);
 
 module.exports = {
     entry: ['./index.js'],
@@ -58,9 +58,9 @@ module.exports = {
             filename: 'index.html',
             favicon: 'favicon.ico'
         }),
-        new CopyWebpackPlugin([
-            { from: 'worlds/**/*' }
-        ]),
+        // new CopyWebpackPlugin([
+        //     { from: 'worlds/**/*' }
+        // ]),
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin()
     ],
