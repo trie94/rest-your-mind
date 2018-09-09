@@ -6,45 +6,78 @@ class World0 extends React.Component {
     constructor(props) {
         super(props)
 
+        this.createScene = this.createScene.bind(this);
+        this.createPlane = this.createPlane.bind(this);
+        this.createCube = this.createCube.bind(this);
+
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
         this.animate = this.animate.bind(this);
+        this.renderScene = this.renderScene.bind(this);
+        this.windowResize = this.windowResize.bind(this);
+
+        let WIDTH, HEIGHT, scene, camera, renderer, container, plane, cube;
     }
 
     componentDidMount() {
-        const width = window.innerWidth * 0.5;
-        const height = window.innerHeight * 0.5;
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            width / height,
-            0.1,
-            1000
-        );
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
-        const cube = new THREE.Mesh(geometry, material);
-
-        camera.position.z = 4;
-        scene.add(cube);
-        renderer.setClearColor('#6a7689');
-        renderer.setSize(width, height);
-
-        this.scene = scene;
-        this.camera = camera;
-        this.renderer = renderer;
-        this.material = material;
-        this.cube = cube;
-
-        this.mount.appendChild(this.renderer.domElement);
+        this.createScene();
         this.start();
     }
 
     componentWillUnmount() {
         this.stop();
-        this.mount.removeChild(this.renderer.domElement);
+        this.container.removeChild(this.renderer.domElement);
+    }
+
+    createScene() {
+        this.WIDTH = window.innerWidth;
+        this.HEIGHT = window.innerHeight;
+
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(
+            60,
+            this.WIDTH / this.HEIGHT,
+            1,
+            10000
+        );
+        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        this.renderer.setSize(this.WIDTH, this.HEIGHT);
+        this.renderer.shadowMap.enabled = true;
+
+        this.container = document.getElementById('world');
+        this.container.appendChild(this.renderer.domElement);
+
+        this.camera.position.set(0, 7, 5);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // create stuff
+        this.createPlane();
+        this.createCube();
+    }
+
+    createPlane() {
+        const planeGeo = new THREE.PlaneGeometry(5, 5);
+        const planeMat = new THREE.MeshBasicMaterial({ color: 0xffff });
+        const plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.rotation.x = 180;
+        this.scene.add(plane);
+        this.plane = plane;
+    }
+
+    createCube() {
+        const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+        const cubeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const cube = new THREE.Mesh(cubeGeo, cubeMat);
+        this.scene.add(cube);
+        this.cube = cube;
+    }
+
+    windowResize() {
+        this.HEIGHT = window.innerHeight;
+        this.WIDTH = window.innerWidth;
+        this.renderer.setSize(this.WIDTH, this.HEIGHT);
+        this.camera.aspect = this.WIDTH / this.HEIGHT;
+        this.camera.updateProjectionMatrix();
     }
 
     start() {
@@ -70,13 +103,12 @@ class World0 extends React.Component {
     }
 
     render() {
+        window.addEventListener('resize', this.windowResize, false);
+
         return (
-            <div>
+            <div id="world">
                 World0
             <li><Link to="/">back to the landing page</Link></li>
-                <div
-                    ref={(mount) => { this.mount = mount }}
-                />
             </div>
         )
     }
