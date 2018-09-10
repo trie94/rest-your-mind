@@ -10,8 +10,8 @@ class Home extends React.Component {
     render() {
         return(
             <div>
-            Welcome to the Rest Your Mind!
-            <li><Link to='/world0'>to the world0</Link></li>
+            <p>Welcome to the Rest Your Mind!</p>
+            <p><Link to='/world1'>to the world</Link></p>
             </div>
         )
     }

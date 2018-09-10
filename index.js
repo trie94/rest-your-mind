@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 
 import Home from './worlds/index/index';
-import World0 from './worlds/world0/world0';
+import World1 from './worlds/world1/world1';
 
 import './style.scss';
 
@@ -22,28 +22,11 @@ if (module.hot) {
     enableProdMode();
 }
 
-class Index extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
-    render() {
-        return(
-            <div>
-            <p><a href="/world0">GO TO THE WORLD0</a></p>
-            </div>
-        )
-    }
-}
-
-export default Index;
-
 ReactDom.render(
-    <BrowserRouter basename = {basename}>
+    <BrowserRouter basename={basename}>
     <Switch>
         <Route exact path ='/' component={Home}/>
-        <Route path = '/world0' component={World0}/>
+        <Route path = '/world1' component={World1}/>
     </Switch>
     </BrowserRouter>,
     document.getElementById('root')
