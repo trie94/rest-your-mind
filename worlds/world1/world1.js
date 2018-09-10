@@ -8,11 +8,11 @@ class World1 extends React.Component {
 
         this.createScene = this.createScene.bind(this);
         this.createPlane = this.createPlane.bind(this);
-        this.createCube = this.createIsland.bind(this);
+        this.createCube = this.createParticles.bind(this);
         this.createParticles = this.createParticles.bind(this);
         this.createLights = this.createLights.bind(this);
-        this.Sea = this.Sea.bind(this);
-        this.createSea = this.createSea.bind(this);
+        this.Island = this.Island.bind(this);
+        this.createIslands = this.createIslands.bind(this);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -21,7 +21,7 @@ class World1 extends React.Component {
         this.windowResize = this.windowResize.bind(this);
 
         let WIDTH, HEIGHT, scene, camera, renderer, container;
-        let plane, island, circle, particle;
+        let plane, island, sea, circle, particle;
     }
 
     componentDidMount() {
@@ -54,53 +54,72 @@ class World1 extends React.Component {
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 200, 100);
+        this.camera.position.set(0, 150, 450);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         // create stuff
-        // this.createPlane();
-        this.createIsland();
-        this.createSea();
-        // this.createParticles();
+        this.createPlane();
+        this.createIslands(10);
+        this.createParticles();
         this.createLights();
     }
 
     createPlane() {
-        const planeGeo = new THREE.PlaneGeometry(10, 10);
-        const planeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const planeGeo = new THREE.PlaneGeometry(300, 300);
+        const planeMat = new THREE.MeshBasicMaterial({
+            color: 0x9ffafa,
+            transparent: true,
+            opacity: 0.7,
+            flatShading: true
+        });
         const plane = new THREE.Mesh(planeGeo, planeMat);
-        plane.rotation.x = 180;
+        plane.rotation.x = 80;
+        plane.position.z = 20;
         this.scene.add(plane);
         this.plane = plane;
     }
 
-    Sea(){
-        const seaGeo = new THREE.CylinderGeometry(600,600,800,40,10);
-        const seaMat = new THREE.MeshPhongMaterial({
-            color:0x68c3c0,
-            transparent:true,
-            opacity:.6,
+    // island object
+    Island(radTop, radBottom, height, radSeg, heightSeg, color, opacity) {
+        const islandGeo = new THREE.CylinderGeometry(radTop, radBottom, height, radSeg, heightSeg);
+        const islandMat = new THREE.MeshPhongMaterial({
+            color: color,
+            transparent: true,
+            opacity: opacity,
             flatShading: true
         });
-        this.mesh = new THREE.Mesh(seaGeo, seaMat);
-        this.mesh.receiveShadow = true;
+        this.mesh = new THREE.Mesh(islandGeo, islandMat);
     }
 
-    createSea(){
-        const seaGeo = new THREE.CylinderGeometry(600,600,800,40,10);
-        const seaMat = new THREE.MeshPhongMaterial({
-            color:0x68c3c0,
-            transparent:true,
-            opacity:.6,
-            flatShading: true
-        });
-        const sea = new THREE.Mesh(seaGeo, seaMat);
-        sea.receiveShadow = true;
-        sea.position.y = -600;
-        this.scene.add(sea);
+    createIslands(number) {
+        const islandColors = [0x304f66, 0x437094, 0x152023];
+        const islands = [];
+
+        for (let i = 0, num = 0; i <= number; i ++){
+            const radTops = Math.round(Math.random() * 10);
+            const radBottoms = radTops + Math.round(Math.random() * 10);
+            const heights = radBottoms - Math.round(Math.round(Math.random() * 10) * 0.5);
+            const radSegs = 10;
+            const heightSegs = 10;
+            const opacities = (Math.floor(Math.random() * 10) + 7) * 0.1;
+
+            // assign color
+            if (num < number-1){
+                num ++;
+            } else {
+                num = 0;
+            }
+
+            islands[i] = new this.Island(radTops, radBottoms, heights, radSegs, heightSegs, islandColors[num], opacities);
+            islands[i].mesh.receiveShadow = true;
+            this.scene.add(islands[i].mesh);
+            islands[i].mesh.position.x = (Math.floor(Math.random() * 10) + 1) * 10 * Math.pow((-1), i);
+            islands[i].mesh.position.y = Math.random() * 10;
+            islands[i].mesh.position.z = Math.random() * 100;
+        }
     }
 
-    createIsland() {
+    createParticles() {
         const circle = new THREE.Object3D();
         const geom = new THREE.TetrahedronGeometry(30, 1);
         const mat = new THREE.MeshPhongMaterial({
@@ -108,18 +127,13 @@ class World1 extends React.Component {
             flatShading: true
         });
 
-        const island = new THREE.Mesh(geom, mat);
-        island.scale.x = island.scale.y = island.scale.z = 0.2;
-        island.position.x = island.position.y = island.position.z = 0;
-        circle.add(island);
+        const particle = new THREE.Mesh(geom, mat);
+        particle.scale.x = particle.scale.y = particle.scale.z = 0.2;
+        particle.position.x = particle.position.y = 0;
+        particle.position.z = 50;
+        circle.add(particle);
         this.scene.add(circle);
         this.circle = circle;
-    }
-
-    createParticles() {
-        const particle = new THREE.Object3D();
-        this.scene.add(particle);
-        this.particle = particle;
     }
 
     createLights() {
@@ -127,15 +141,15 @@ class World1 extends React.Component {
         this.scene.add(ambientLight);
 
         let lights = [];
-        lights[0] = new THREE.DirectionalLight( 0xffffff, 1 );
-        lights[0].position.set( 1, 0, 0 );
-        lights[1] = new THREE.DirectionalLight( 0x11E8BB, 1 );
-        lights[1].position.set( 0.75, 1, 0.5 );
-        lights[2] = new THREE.DirectionalLight( 0x8200C9, 1 );
-        lights[2].position.set( -0.75, -1, 0.5 );
-        this.scene.add( lights[0] );
-        this.scene.add( lights[1] );
-        this.scene.add( lights[2] );
+        lights[0] = new THREE.DirectionalLight(0xffffff, 1);
+        lights[0].position.set(1, 0, 0);
+        lights[1] = new THREE.DirectionalLight(0x46f5fd, 1);
+        lights[1].position.set(0.75, 1, 0.5);
+        lights[2] = new THREE.DirectionalLight(0x8200C9, 1);
+        lights[2].position.set(-0.75, -1, 0.5);
+        this.scene.add(lights[0]);
+        this.scene.add(lights[1]);
+        this.scene.add(lights[2]);
     }
 
     windowResize() {
@@ -157,8 +171,14 @@ class World1 extends React.Component {
     }
 
     animate() {
-        this.circle.rotation.x += 0.003;
-        this.circle.rotation.y += 0.003;
+        this.circle.rotation.x += 0.01;
+        this.circle.rotation.y += 0.02;
+        this.circle.rotation.z += 0.03;
+        // this.island.mesh.scale.x += 0.1;
+
+        // if (this.island.mesh.scale.y <= 1.5){
+        //     this.island.mesh.scale.y += 0.01;
+        // }
 
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
@@ -170,7 +190,6 @@ class World1 extends React.Component {
 
     render() {
         window.addEventListener('resize', this.windowResize, false);
-
         return (
             <div id="world">
                 <p><Link to="/">back to the landing page</Link></p>
