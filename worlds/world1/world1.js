@@ -11,6 +11,8 @@ class World1 extends React.Component {
         this.createCube = this.createIsland.bind(this);
         this.createParticles = this.createParticles.bind(this);
         this.createLights = this.createLights.bind(this);
+        this.Sea = this.Sea.bind(this);
+        this.createSea = this.createSea.bind(this);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -39,10 +41,10 @@ class World1 extends React.Component {
         this.scene = new THREE.Scene();
         this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
         this.camera = new THREE.PerspectiveCamera(
-            75,
+            60,
             this.WIDTH / this.HEIGHT,
             1,
-            1000
+            10000
         );
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         this.renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
@@ -52,12 +54,13 @@ class World1 extends React.Component {
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 20, 10);
+        this.camera.position.set(0, 200, 100);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         // create stuff
         // this.createPlane();
         this.createIsland();
+        this.createSea();
         // this.createParticles();
         this.createLights();
     }
@@ -69,6 +72,32 @@ class World1 extends React.Component {
         plane.rotation.x = 180;
         this.scene.add(plane);
         this.plane = plane;
+    }
+
+    Sea(){
+        const seaGeo = new THREE.CylinderGeometry(600,600,800,40,10);
+        const seaMat = new THREE.MeshPhongMaterial({
+            color:0x68c3c0,
+            transparent:true,
+            opacity:.6,
+            flatShading: true
+        });
+        this.mesh = new THREE.Mesh(seaGeo, seaMat);
+        this.mesh.receiveShadow = true;
+    }
+
+    createSea(){
+        const seaGeo = new THREE.CylinderGeometry(600,600,800,40,10);
+        const seaMat = new THREE.MeshPhongMaterial({
+            color:0x68c3c0,
+            transparent:true,
+            opacity:.6,
+            flatShading: true
+        });
+        const sea = new THREE.Mesh(seaGeo, seaMat);
+        sea.receiveShadow = true;
+        sea.position.y = -600;
+        this.scene.add(sea);
     }
 
     createIsland() {
