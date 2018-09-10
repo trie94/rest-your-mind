@@ -8,7 +8,8 @@ class World1 extends React.Component {
 
         this.createScene = this.createScene.bind(this);
         this.createPlane = this.createPlane.bind(this);
-        this.createCube = this.createCube.bind(this);
+        this.createCube = this.createIsland.bind(this);
+        this.createParticles = this.createParticles.bind(this);
         this.createLights = this.createLights.bind(this);
 
         this.start = this.start.bind(this);
@@ -18,8 +19,7 @@ class World1 extends React.Component {
         this.windowResize = this.windowResize.bind(this);
 
         let WIDTH, HEIGHT, scene, camera, renderer, container;
-        let plane, cube;
-        let hemisphereLight, shadowLight;
+        let plane, island, circle, particle;
     }
 
     componentDidMount() {
@@ -39,12 +39,13 @@ class World1 extends React.Component {
         this.scene = new THREE.Scene();
         this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
         this.camera = new THREE.PerspectiveCamera(
-            60,
+            75,
             this.WIDTH / this.HEIGHT,
             1,
-            10000
+            1000
         );
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        this.renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
         this.renderer.setSize(this.WIDTH, this.HEIGHT);
         this.renderer.shadowMap.enabled = true;
 
@@ -55,48 +56,57 @@ class World1 extends React.Component {
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         // create stuff
-        this.createPlane();
-        this.createCube();
+        // this.createPlane();
+        this.createIsland();
+        // this.createParticles();
         this.createLights();
     }
 
     createPlane() {
         const planeGeo = new THREE.PlaneGeometry(10, 10);
-        const planeMat = new THREE.MeshBasicMaterial({ color: 0xffff });
+        const planeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const plane = new THREE.Mesh(planeGeo, planeMat);
         plane.rotation.x = 180;
         this.scene.add(plane);
         this.plane = plane;
     }
 
-    createCube() {
-        const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
-        const cubeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const cube = new THREE.Mesh(cubeGeo, cubeMat);
-        this.scene.add(cube);
-        this.cube = cube;
+    createIsland() {
+        const circle = new THREE.Object3D();
+        const geom = new THREE.TetrahedronGeometry(30, 1);
+        const mat = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            flatShading: true
+        });
+
+        const island = new THREE.Mesh(geom, mat);
+        island.scale.x = island.scale.y = island.scale.z = 0.2;
+        island.position.x = island.position.y = island.position.z = 0;
+        circle.add(island);
+        this.scene.add(circle);
+        this.circle = circle;
+    }
+
+    createParticles() {
+        const particle = new THREE.Object3D();
+        this.scene.add(particle);
+        this.particle = particle;
     }
 
     createLights() {
-        let hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, .9);
-        let shadowLight = new THREE.DirectionalLight(0xffffff, .9);
+        let ambientLight = new THREE.AmbientLight(0x999999);
+        this.scene.add(ambientLight);
 
-        shadowLight.position.set(150, 350, 350);
-        shadowLight.castShadow = true;
-        shadowLight.shadow.camera.left = -400;
-        shadowLight.shadow.camera.right = 400;
-        shadowLight.shadow.camera.top = 400;
-        shadowLight.shadow.camera.bottom = -400;
-        shadowLight.shadow.camera.near = 1;
-        shadowLight.shadow.camera.far = 1000;
-        shadowLight.shadow.mapSize.width = 2048;
-        shadowLight.shadow.mapSize.height = 2048;
-        
-        this.scene.add(hemisphereLight);  
-        this.scene.add(shadowLight);
-
-        this.hemisphereLight = hemisphereLight;
-        this.shadowLight = shadowLight;
+        let lights = [];
+        lights[0] = new THREE.DirectionalLight( 0xffffff, 1 );
+        lights[0].position.set( 1, 0, 0 );
+        lights[1] = new THREE.DirectionalLight( 0x11E8BB, 1 );
+        lights[1].position.set( 0.75, 1, 0.5 );
+        lights[2] = new THREE.DirectionalLight( 0x8200C9, 1 );
+        lights[2].position.set( -0.75, -1, 0.5 );
+        this.scene.add( lights[0] );
+        this.scene.add( lights[1] );
+        this.scene.add( lights[2] );
     }
 
     windowResize() {
@@ -118,8 +128,8 @@ class World1 extends React.Component {
     }
 
     animate() {
-        this.cube.rotation.x += 0.005;
-        this.cube.rotation.y += 0.005;
+        this.circle.rotation.x += 0.003;
+        this.circle.rotation.y += 0.003;
 
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
@@ -134,7 +144,7 @@ class World1 extends React.Component {
 
         return (
             <div id="world">
-            <p><Link to="/">back to the landing page</Link></p>
+                <p><Link to="/">back to the landing page</Link></p>
             </div>
         )
     }
