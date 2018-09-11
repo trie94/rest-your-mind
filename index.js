@@ -3,7 +3,7 @@ import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 
 import Home from './worlds/index/index';
-import World1 from './worlds/world1/world1';
+import World1 from './worlds/world1';
 
 import './style.scss';
 

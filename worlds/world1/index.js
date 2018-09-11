@@ -59,7 +59,7 @@ class World1 extends React.Component {
 
         // create stuff
         this.createPlane();
-        this.createIslands(10);
+        this.createIslands(20);
         this.createParticles();
         this.createLights();
     }
@@ -92,7 +92,7 @@ class World1 extends React.Component {
     }
 
     createIslands(number) {
-        const islandColors = [0x304f66, 0x437094, 0x152023];
+        const islandColors = [0xf7faff, 0xc1ecff, 0xc1c3ff, 0x9397ff, 0x93f5ff];
         const islands = [];
 
         for (let i = 0, num = 0; i <= number; i ++){
@@ -104,7 +104,7 @@ class World1 extends React.Component {
             const opacities = (Math.floor(Math.random() * 10) + 7) * 0.1;
 
             // assign color
-            if (num < number-1){
+            if (num < islandColors.length-1){
                 num ++;
             } else {
                 num = 0;

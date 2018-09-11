@@ -3,6 +3,27 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const glob = require('glob');
+
+console.log('globbing');
+let files = glob.sync('./worlds/**/index.js');
+files = files.map(function(file) {
+    let name = file;
+    name = name.replace('/index.js', '');
+    name = name.replace('./worlds/', '');
+    name = name + '/index.html';
+    return name;
+});
+files.push('index.html');
+console.log(files);
+
+const htmlPlugins = files.map(function(file) {
+    return new HtmlWebpackPlugin({
+        template: 'index.html',
+        filename: file,
+        favicon: 'favicon.ico'
+    })
+})
 
 module.exports = {
     entry: ['./index.js'],
@@ -47,14 +68,9 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(['dist/*']),
-        new HtmlWebpackPlugin({
-            template: 'index.html',
-            filename: 'index.html',
-            favicon: 'favicon.ico'
-        }),
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin()
-    ],
+    ].concat(htmlPlugins),
 
     optimization: {
         splitChunks: {
