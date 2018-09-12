@@ -7,8 +7,7 @@ class World1 extends React.Component {
         super(props)
 
         this.createScene = this.createScene.bind(this);
-        this.createPlane = this.createPlane.bind(this);
-        this.createCube = this.createParticles.bind(this);
+        this.createSea = this.createSea.bind(this);
         this.createParticles = this.createParticles.bind(this);
         this.createLights = this.createLights.bind(this);
         this.Island = this.Island.bind(this);
@@ -20,8 +19,8 @@ class World1 extends React.Component {
         this.renderScene = this.renderScene.bind(this);
         this.windowResize = this.windowResize.bind(this);
 
-        let WIDTH, HEIGHT, scene, camera, renderer, container;
-        let plane, island, sea, circle, particle;
+        // add object that requires animation
+        this.circle;
     }
 
     componentDidMount() {
@@ -58,25 +57,36 @@ class World1 extends React.Component {
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         // create stuff
-        this.createPlane();
+        this.createSea();
         this.createIslands(20);
         this.createParticles();
         this.createLights();
     }
 
-    createPlane() {
-        const planeGeo = new THREE.PlaneGeometry(300, 300);
-        const planeMat = new THREE.MeshBasicMaterial({
+    createSea() {
+        const seaGeom = new THREE.CylinderGeometry(160,160,15,20,10);
+        // seaGeom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+        const seaMat = new THREE.MeshBasicMaterial({
             color: 0x9ffafa,
             transparent: true,
             opacity: 0.7,
-            flatShading: true
+            flatShading: true,
+            // wireframe: true
         });
-        const plane = new THREE.Mesh(planeGeo, planeMat);
-        plane.rotation.x = 80;
-        plane.position.z = 20;
-        this.scene.add(plane);
-        this.plane = plane;
+        const dombGeo = new THREE.TetrahedronGeometry(170, 3);
+        const dombMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            // flatShading: true,
+            // wireframe: true
+        });
+        const sea = new THREE.Mesh(seaGeom, seaMat);
+        const domb = new THREE.Mesh(dombGeo, dombMat);
+        sea.position.y = -5;
+        sea.receiveShadow = true;
+        this.scene.add(sea);
+        // this.scene.add(domb);
     }
 
     // island object
@@ -84,8 +94,8 @@ class World1 extends React.Component {
         const islandGeo = new THREE.CylinderGeometry(radTop, radBottom, height, radSeg, heightSeg);
         const islandMat = new THREE.MeshPhongMaterial({
             color: color,
-            transparent: true,
-            opacity: opacity,
+            // transparent: true,
+            // opacity: opacity,
             flatShading: true
         });
         this.mesh = new THREE.Mesh(islandGeo, islandMat);
