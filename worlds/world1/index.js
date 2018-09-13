@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import React from 'react';
 import { Link } from 'react-router-dom';
+const OrbitControls = require('three-orbit-controls')(THREE);
 
 class World1 extends React.Component {
     constructor(props) {
@@ -12,6 +13,7 @@ class World1 extends React.Component {
         this.createLights = this.createLights.bind(this);
         this.Island = this.Island.bind(this);
         this.createIslands = this.createIslands.bind(this);
+        this.createWaves = this.createWaves.bind(this);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -21,11 +23,13 @@ class World1 extends React.Component {
 
         // add object that requires animation
         this.circle;
+        this.controls;
     }
 
     componentDidMount() {
         this.createScene();
         this.start();
+        // this.controls.update();
     }
 
     componentWillUnmount() {
@@ -38,7 +42,7 @@ class World1 extends React.Component {
         this.HEIGHT = window.innerHeight;
 
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
+        this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 1000);
         this.camera = new THREE.PerspectiveCamera(
             60,
             this.WIDTH / this.HEIGHT,
@@ -56,15 +60,20 @@ class World1 extends React.Component {
         this.camera.position.set(0, 150, 450);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.target = new THREE.Vector3(0, 15, 0);
+        this.controls.maxPolarAngle = Math.PI / 2;
+
         // create stuff
         this.createSea();
         this.createIslands(20);
         this.createParticles();
         this.createLights();
+        this.createWaves();
     }
 
     createSea() {
-        const seaGeom = new THREE.CylinderGeometry(160,160,15,20,10);
+        const seaGeom = new THREE.CylinderGeometry(160, 160, 15, 20, 10);
         // seaGeom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
         const seaMat = new THREE.MeshBasicMaterial({
             color: 0x9ffafa,
@@ -94,8 +103,8 @@ class World1 extends React.Component {
         const islandGeo = new THREE.CylinderGeometry(radTop, radBottom, height, radSeg, heightSeg);
         const islandMat = new THREE.MeshPhongMaterial({
             color: color,
-            // transparent: true,
-            // opacity: opacity,
+            transparent: false,
+            opacity: opacity,
             flatShading: true
         });
         this.mesh = new THREE.Mesh(islandGeo, islandMat);
@@ -105,7 +114,7 @@ class World1 extends React.Component {
         const islandColors = [0xf7faff, 0xc1ecff, 0xc1c3ff, 0x9397ff, 0x93f5ff];
         const islands = [];
 
-        for (let i = 0, num = 0; i <= number; i ++){
+        for (let i = 0, num = 0; i <= number; i++) {
             const radTops = Math.round(Math.random() * 10);
             const radBottoms = radTops + Math.round(Math.random() * 10);
             const heights = radBottoms - Math.round(Math.round(Math.random() * 10) * 0.5);
@@ -114,8 +123,8 @@ class World1 extends React.Component {
             const opacities = (Math.floor(Math.random() * 10) + 7) * 0.1;
 
             // assign color
-            if (num < islandColors.length-1){
-                num ++;
+            if (num < islandColors.length - 1) {
+                num++;
             } else {
                 num = 0;
             }
@@ -127,6 +136,23 @@ class World1 extends React.Component {
             islands[i].mesh.position.y = Math.random() * 10;
             islands[i].mesh.position.z = Math.random() * 100;
         }
+    }
+
+    createWaves() {
+        const waveGeo = new THREE.RingGeometry(0, 160, 20, 20, 20);
+        const waveMat = new THREE.MeshBasicMaterial({
+            color: 0x9ffafa,
+            transparent: true,
+            opacity: 0.7,
+            // flatShading: true,
+            side: THREE.DoubleSide,
+            depthWrite: false
+            // wireframe: true
+        });
+        const waves = new THREE.Mesh(waveGeo, waveMat);
+        waves.rotation.x = Math.PI / 2;
+        this.scene.add(waves);
+        console.log(waves);
     }
 
     createParticles() {
@@ -184,6 +210,7 @@ class World1 extends React.Component {
         this.circle.rotation.x += 0.01;
         this.circle.rotation.y += 0.02;
         this.circle.rotation.z += 0.03;
+
         // this.island.mesh.scale.x += 0.1;
 
         // if (this.island.mesh.scale.y <= 1.5){
