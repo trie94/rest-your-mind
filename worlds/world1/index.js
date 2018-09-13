@@ -29,7 +29,6 @@ class World1 extends React.Component {
     componentDidMount() {
         this.createScene();
         this.start();
-        // this.controls.update();
     }
 
     componentWillUnmount() {
@@ -216,7 +215,7 @@ class World1 extends React.Component {
         // if (this.island.mesh.scale.y <= 1.5){
         //     this.island.mesh.scale.y += 0.01;
         // }
-
+        this.controls.update();
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }
