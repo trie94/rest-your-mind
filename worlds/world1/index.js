@@ -14,6 +14,7 @@ class World1 extends React.Component {
         this.Island = this.Island.bind(this);
         this.createIslands = this.createIslands.bind(this);
         this.createWaves = this.createWaves.bind(this);
+        this.moveWaves = this.moveWaves.bind(this);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -24,6 +25,8 @@ class World1 extends React.Component {
         // add object that requires animation
         this.circle;
         this.controls;
+        this.waves;
+        this.wavesVertex = [];
     }
 
     componentDidMount() {
@@ -150,8 +153,49 @@ class World1 extends React.Component {
         });
         const waves = new THREE.Mesh(waveGeo, waveMat);
         waves.rotation.x = Math.PI / 2;
+
+        let wavesVertex = [];
+        let vertexLength = waveGeo.vertices.length;
+        for (let i = 0; i < vertexLength; i++) {
+            let v = waveGeo.vertices[i];
+            wavesVertex.push({
+                y: v.y,
+                x: v.x,
+                z: v.z,
+                // a random angle
+                ang: Math.random() * Math.PI * 2,
+                // a random distance
+                amp: 3 + Math.random() * 2,
+                // a random speed between 0.016 and 0.048 radians / frame
+                speed: 0.008 + Math.random() * 0.008
+            });
+        }
+        this.wavesVertex = wavesVertex;
+        this.waves = waves;
         this.scene.add(waves);
-        console.log(waves);
+    }
+
+    moveWaves() {
+        // get the vertices
+        let verts = this.waves.geometry.vertices;
+        let l = verts.length;
+
+        for (let i = 0; i < l; i++) {
+            let v = verts[i];
+
+            // get the data associated to it
+            let vprops = this.wavesVertex[i];
+
+            // update the position of the vertex
+            v.x = vprops.x + Math.cos(vprops.ang) * vprops.amp;
+            v.z = vprops.z + Math.sin(vprops.ang) * vprops.amp;
+
+            // increment the angle for the next frame
+            vprops.ang += vprops.speed;
+
+        }
+        this.waves.geometry.verticesNeedUpdate = true;
+        this.waves.rotation.z += .005;
     }
 
     createParticles() {
@@ -210,12 +254,8 @@ class World1 extends React.Component {
         this.circle.rotation.y += 0.02;
         this.circle.rotation.z += 0.03;
 
-        // this.island.mesh.scale.x += 0.1;
-
-        // if (this.island.mesh.scale.y <= 1.5){
-        //     this.island.mesh.scale.y += 0.01;
-        // }
         this.controls.update();
+        this.moveWaves();
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }
