@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import React from 'react';
 import { Link } from 'react-router-dom';
 const OrbitControls = require('three-orbit-controls')(THREE);
+import * as Elements from './elements';
 
 class World1 extends React.Component {
     constructor(props) {
@@ -12,11 +13,12 @@ class World1 extends React.Component {
         this.createGrid = this.createGrid.bind(this);
         this.createSea = this.createSea.bind(this);
 
-        this.createParticles = this.createParticles.bind(this);
         this.createLights = this.createLights.bind(this);
 
         this.Island = this.Island.bind(this);
         this.createIslands = this.createIslands.bind(this);
+        this.createIceberg = this.createIceberg.bind(this);
+
         this.createWaves = this.createWaves.bind(this);
         this.moveWaves = this.moveWaves.bind(this);
 
@@ -37,6 +39,7 @@ class World1 extends React.Component {
 
         // variables for the base
         this.radius = 160;
+
         // number of islands
         this.islandNum = 30;
     }
@@ -79,12 +82,13 @@ class World1 extends React.Component {
         this.controls.maxPolarAngle = Math.PI / 2;
 
         // create stuff
-        this.createSea();
         this.createGrid();
-        this.createIslands(this.islandNum);
-        this.createParticles();
+        this.createSea();
+        // this.createIslands(this.islandNum);
+        this.createIceberg(this.islandNum);
         this.createLights();
         this.createWaves();
+        Elements.createClouds();
     }
 
     createGrid() {
@@ -100,8 +104,8 @@ class World1 extends React.Component {
         // set 0 opacity for production
         const material = new THREE.LineBasicMaterial({
             color: config.color,
-            // transparent: true,
-            opacity: 0.5
+            transparent: true,
+            opacity: 0
         });
 
         // line
@@ -129,24 +133,24 @@ class World1 extends React.Component {
         // draw grid line
         const line = new THREE.LineSegments(gridGeo, material);
         gridObject.add(line);
-        gridObject.rotation.x = Math.PI/2;
+        gridObject.rotation.x = Math.PI / 2;
         this.scene.add(gridObject);
 
         // point vertices
-        for (let i = -config.width; i <= config.width; i += stepw){
-            for (let j= -config.height; j<=config.height; j += steph){
-                pointGeo.vertices.push(new THREE.Vector3(i,j,0));
+        for (let i = -config.width; i <= config.width; i += stepw) {
+            for (let j = -config.height; j <= config.height; j += steph) {
+                pointGeo.vertices.push(new THREE.Vector3(i, j, 0));
             }
         }
 
         let prevIndex = null;
         for (let i = 0; i < this.islandNum; i++) {
 
-            let index = Math.floor((Math.random() * pointGeo.vertices.length-1) + 1);
+            let index = Math.floor((Math.random() * pointGeo.vertices.length - 1) + 1);
 
             // prevent overlap
-            while(index === prevIndex){
-                index = Math.floor((Math.random() * pointGeo.vertices.length-1) + 1);
+            while (index === prevIndex) {
+                index = Math.floor((Math.random() * pointGeo.vertices.length - 1) + 1);
             }
 
             this.pointVertex[i] = pointGeo.vertices[index];
@@ -197,11 +201,12 @@ class World1 extends React.Component {
         const islands = [];
 
         for (let i = 0, num = 0; i < number; i++) {
-            const radTops = Math.round(Math.random() * 10);
-            const radBottoms = radTops + Math.round(Math.random() * 10);
-            const heights = radBottoms - Math.round(Math.round(Math.random() * 10) * 0.5);
-            const radSegs = 10;
-            const heightSegs = 10;
+            const radTops = (Math.floor(Math.random() * 10) + 3);
+            const radBottoms = radTops + (Math.floor(Math.random() * 10) + 1);
+            const heights = radTops + (Math.floor(Math.random() * 15) - 3);
+
+            const radSegs = (Math.floor(Math.random() * 10) + 7);
+            const heightSegs = (Math.floor(Math.random() * 15) + 10);
             const opacities = (Math.floor(Math.random() * 10) + 7) * 0.1;
 
             // assign color
@@ -218,6 +223,43 @@ class World1 extends React.Component {
             islands[i].mesh.position.y = this.pointVertex[i].z;
             islands[i].mesh.position.z = this.pointVertex[i].y;
         }
+    }
+
+    // same as island
+    createIceberg(number) {
+        const icebergColors = [0xf7faff, 0xc1ecff, 0xc1c3ff, 0x9397ff, 0x93f5ff];
+        const iceberg = new THREE.Object3D();
+    
+        for (let i = 0, num = 0; i < number; i++) {
+    
+            const rad = (Math.floor(Math.random() * 15) + 3);
+            const detail = (Math.floor(Math.random() * 1.2) + 1);
+            const iceGeo = new THREE.TetrahedronGeometry(rad, detail);
+            const iceMat = new THREE.MeshPhongMaterial({
+                color: icebergColors[num],
+                flatShading: true,
+                // transparent: true,
+                // opacity: 0.7
+            });
+
+            if (num < icebergColors.length - 1) {
+                num++;
+
+            } else {
+                num = 0;
+            }
+
+            const icebergMesh = new THREE.Mesh(iceGeo, iceMat);
+            icebergMesh.position.x = this.pointVertex[i].x;
+            icebergMesh.position.y = this.pointVertex[i].z;
+            icebergMesh.position.z = this.pointVertex[i].y;
+            icebergMesh.rotation.x = (Math.floor(Math.random() * Math.PI));
+            icebergMesh.rotation.y = (Math.floor(Math.random() * Math.PI));
+            icebergMesh.rotation.z = (Math.floor(Math.random() * Math.PI));
+            iceberg.add(icebergMesh);
+        }
+
+        this.scene.add(iceberg);
     }
 
     createWaves() {
@@ -278,23 +320,6 @@ class World1 extends React.Component {
         this.waves.rotation.z += .005;
     }
 
-    createParticles() {
-        const circle = new THREE.Object3D();
-        const geom = new THREE.TetrahedronGeometry(30, 1);
-        const mat = new THREE.MeshPhongMaterial({
-            color: 0xffffff,
-            flatShading: true
-        });
-
-        const particle = new THREE.Mesh(geom, mat);
-        particle.scale.x = particle.scale.y = particle.scale.z = 0.2;
-        particle.position.x = particle.position.y = 0;
-        particle.position.z = 50;
-        circle.add(particle);
-        this.scene.add(circle);
-        this.circle = circle;
-    }
-
     createLights() {
         let ambientLight = new THREE.AmbientLight(0x999999);
         this.scene.add(ambientLight);
@@ -330,10 +355,6 @@ class World1 extends React.Component {
     }
 
     animate() {
-        this.circle.rotation.x += 0.01;
-        this.circle.rotation.y += 0.02;
-        this.circle.rotation.z += 0.03;
-
         this.controls.update();
         this.moveWaves();
         this.renderScene();
