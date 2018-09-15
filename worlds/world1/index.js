@@ -9,7 +9,6 @@ class World1 extends React.Component {
 
         this.createScene = this.createScene.bind(this);
 
-        this.Grid = this.Grid.bind(this);
         this.createGrid = this.createGrid.bind(this);
         this.createSea = this.createSea.bind(this);
 
@@ -31,13 +30,15 @@ class World1 extends React.Component {
         this.circle;
         this.controls;
         this.waves;
+        // for wave movement
         this.wavesVertex = [];
-        this.gridsVertex = [];
+        // for island position
+        this.pointVertex = [];
 
         // variables for the base
         this.radius = 160;
         // number of islands
-        this.islandNum = 20;
+        this.islandNum = 30;
     }
 
     componentDidMount() {
@@ -86,64 +87,71 @@ class World1 extends React.Component {
         this.createWaves();
     }
 
-    Grid() {
+    createGrid() {
         // grid for generating random islands
-        // disable createGrid function for production
-
         const config = {
-            height: 160,
-            width: 160,
-            heightSeg: 20,
-            widthSeg: 20,
+            height: 100,
+            width: 100,
+            heightSeg: 100,
+            widthSeg: 100,
             color: "black"
         };
 
+        // set 0 opacity for production
         const material = new THREE.LineBasicMaterial({
             color: config.color,
-            opacity: 1
+            // transparent: true,
+            opacity: 0.5
         });
 
+        // line
         const gridObject = new THREE.Object3D();
         const gridGeo = new THREE.Geometry();
+
+        // each vertice point
+        const pointGeo = new THREE.Geometry();
+
         const stepw = 2 * config.width / config.widthSeg;
         const steph = 2 * config.height / config.heightSeg;
 
-        //width
+        // line - width
         for (let i = -config.width; i <= config.width; i += stepw) {
             gridGeo.vertices.push(new THREE.Vector3(-config.height, i, 0));
             gridGeo.vertices.push(new THREE.Vector3(config.height, i, 0));
         }
 
-        //height
+        // line - height
         for (let i = -config.height; i <= config.height; i += steph) {
             gridGeo.vertices.push(new THREE.Vector3(i, -config.width, 0));
             gridGeo.vertices.push(new THREE.Vector3(i, config.width, 0));
         }
 
+        // draw grid line
         const line = new THREE.LineSegments(gridGeo, material);
         gridObject.add(line);
+        gridObject.rotation.x = Math.PI/2;
+        this.scene.add(gridObject);
+
+        // point vertices
+        for (let i = -config.width; i <= config.width; i += stepw){
+            for (let j= -config.height; j<=config.height; j += steph){
+                pointGeo.vertices.push(new THREE.Vector3(i,j,0));
+            }
+        }
 
         let prevIndex = null;
         for (let i = 0; i < this.islandNum; i++) {
 
-            let index = Math.floor((Math.random() * gridGeo.vertices.length-1) + 1);
+            let index = Math.floor((Math.random() * pointGeo.vertices.length-1) + 1);
 
             // prevent overlap
             while(index === prevIndex){
-                index = Math.floor((Math.random() * gridGeo.vertices.length-1) + 1);
+                index = Math.floor((Math.random() * pointGeo.vertices.length-1) + 1);
             }
 
-            this.gridsVertex[i] = gridGeo.vertices[i];
+            this.pointVertex[i] = pointGeo.vertices[index];
             prevIndex = index;
         }
-        return gridObject;
-    }
-
-    createGrid() {
-        let grids = this.Grid();
-        grids.rotation.x = Math.PI / 2;
-        this.grids = grids;
-        this.scene.add(grids);
     }
 
     createSea() {
@@ -206,10 +214,9 @@ class World1 extends React.Component {
             islands[i] = new this.Island(radTops, radBottoms, heights, radSegs, heightSegs, islandColors[num], opacities);
             islands[i].mesh.receiveShadow = true;
             this.scene.add(islands[i].mesh);
-            islands[i].mesh.position.x = this.gridsVertex[i].x;
-            islands[i].mesh.position.y = this.gridsVertex[i].z;
-            islands[i].mesh.position.z = this.gridsVertex[i].y;
-            // console.log(this.gridsVertex[i]);
+            islands[i].mesh.position.x = this.pointVertex[i].x;
+            islands[i].mesh.position.y = this.pointVertex[i].z;
+            islands[i].mesh.position.z = this.pointVertex[i].y;
         }
     }
 
