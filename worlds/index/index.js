@@ -11,7 +11,8 @@ class Home extends React.Component {
         return(
             <div>
             <p>Welcome to the Rest Your Mind! This is the landing page</p>
-            <p><Link to='/world1'>to the world</Link></p>
+            <p><Link to='/world1'>to the ice world</Link></p>
+            <p><Link to='/world2'>to the garden</Link></p>
             </div>
         )
     }
