@@ -8,9 +8,14 @@ class World1 extends React.Component {
         super(props)
 
         this.createScene = this.createScene.bind(this);
+
+        this.Grid = this.Grid.bind(this);
+        this.createGrid = this.createGrid.bind(this);
         this.createSea = this.createSea.bind(this);
+
         this.createParticles = this.createParticles.bind(this);
         this.createLights = this.createLights.bind(this);
+
         this.Island = this.Island.bind(this);
         this.createIslands = this.createIslands.bind(this);
         this.createWaves = this.createWaves.bind(this);
@@ -27,6 +32,9 @@ class World1 extends React.Component {
         this.controls;
         this.waves;
         this.wavesVertex = [];
+
+        // variables for the base
+        this.radius = 160;
     }
 
     componentDidMount() {
@@ -68,14 +76,59 @@ class World1 extends React.Component {
 
         // create stuff
         this.createSea();
+        this.createGrid();
         this.createIslands(20);
         this.createParticles();
         this.createLights();
         this.createWaves();
     }
 
+    Grid() {
+        // grid for generating random islands
+        const config = {
+            height: 160,
+            width: 160,
+            linesHeight: 10,
+            linesWidth: 10,
+            color: "black"
+        };
+
+        const material = new THREE.LineBasicMaterial({
+            color: config.color,
+            opacity: 1
+        });
+
+        const gridObject = new THREE.Object3D();
+        const gridGeo = new THREE.Geometry();
+        const stepw = 2 * config.width / config.linesWidth;
+        const steph = 2 * config.height / config.linesHeight;
+
+        //width
+        for (let i = -config.width; i <= config.width; i += stepw) {
+            gridGeo.vertices.push(new THREE.Vector3(-config.height, i, 0));
+            gridGeo.vertices.push(new THREE.Vector3(config.height, i, 0));
+        }
+
+        //height
+        for (let i = -config.height; i <= config.height; i += steph) {
+            gridGeo.vertices.push(new THREE.Vector3(i, -config.width, 0));
+            gridGeo.vertices.push(new THREE.Vector3(i, config.width, 0));
+        }
+
+        let line = new THREE.LineSegments(gridGeo, material);
+        gridObject.add(line);
+
+        return gridObject;
+    }
+
+    createGrid(){
+        let grids = this.Grid();
+        grids.rotation.x = Math.PI/2;
+        this.scene.add(grids);
+    }
+
     createSea() {
-        const seaGeom = new THREE.CylinderGeometry(160, 160, 15, 20, 10);
+        const seaGeom = new THREE.CylinderGeometry(this.radius, this.radius, 15, 20, 10);
         // seaGeom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
         const seaMat = new THREE.MeshBasicMaterial({
             color: 0x9ffafa,
@@ -141,14 +194,14 @@ class World1 extends React.Component {
     }
 
     createWaves() {
-        const waveGeo = new THREE.RingGeometry(0, 160, 20, 20, 20);
+        const waveGeo = new THREE.RingGeometry(0, this.radius, 20, 20, 20);
         const waveMat = new THREE.MeshBasicMaterial({
             color: 0x9ffafa,
             transparent: true,
             opacity: 0.7,
             // flatShading: true,
             side: THREE.DoubleSide,
-            depthWrite: false
+            depthWrite: false,
             // wireframe: true
         });
         const waves = new THREE.Mesh(waveGeo, waveMat);
@@ -165,7 +218,7 @@ class World1 extends React.Component {
                 // a random angle
                 ang: Math.random() * Math.PI * 2,
                 // a random distance
-                amp: 3 + Math.random() * 2,
+                amp: 3 + Math.random() * 3,
                 // a random speed between 0.016 and 0.048 radians / frame
                 speed: 0.008 + Math.random() * 0.008
             });
