@@ -32,9 +32,12 @@ class World1 extends React.Component {
         this.controls;
         this.waves;
         this.wavesVertex = [];
+        this.gridsVertex = [];
 
         // variables for the base
         this.radius = 160;
+        // number of islands
+        this.islandNum = 20;
     }
 
     componentDidMount() {
@@ -77,7 +80,7 @@ class World1 extends React.Component {
         // create stuff
         this.createSea();
         this.createGrid();
-        this.createIslands(20);
+        this.createIslands(this.islandNum);
         this.createParticles();
         this.createLights();
         this.createWaves();
@@ -85,11 +88,13 @@ class World1 extends React.Component {
 
     Grid() {
         // grid for generating random islands
+        // disable createGrid function for production
+
         const config = {
             height: 160,
             width: 160,
-            linesHeight: 10,
-            linesWidth: 10,
+            heightSeg: 20,
+            widthSeg: 20,
             color: "black"
         };
 
@@ -100,8 +105,8 @@ class World1 extends React.Component {
 
         const gridObject = new THREE.Object3D();
         const gridGeo = new THREE.Geometry();
-        const stepw = 2 * config.width / config.linesWidth;
-        const steph = 2 * config.height / config.linesHeight;
+        const stepw = 2 * config.width / config.widthSeg;
+        const steph = 2 * config.height / config.heightSeg;
 
         //width
         for (let i = -config.width; i <= config.width; i += stepw) {
@@ -115,15 +120,29 @@ class World1 extends React.Component {
             gridGeo.vertices.push(new THREE.Vector3(i, config.width, 0));
         }
 
-        let line = new THREE.LineSegments(gridGeo, material);
+        const line = new THREE.LineSegments(gridGeo, material);
         gridObject.add(line);
 
+        let prevIndex = null;
+        for (let i = 0; i < this.islandNum; i++) {
+
+            let index = Math.floor((Math.random() * gridGeo.vertices.length-1) + 1);
+
+            // prevent overlap
+            while(index === prevIndex){
+                index = Math.floor((Math.random() * gridGeo.vertices.length-1) + 1);
+            }
+
+            this.gridsVertex[i] = gridGeo.vertices[i];
+            prevIndex = index;
+        }
         return gridObject;
     }
 
-    createGrid(){
+    createGrid() {
         let grids = this.Grid();
-        grids.rotation.x = Math.PI/2;
+        grids.rotation.x = Math.PI / 2;
+        this.grids = grids;
         this.scene.add(grids);
     }
 
@@ -169,7 +188,7 @@ class World1 extends React.Component {
         const islandColors = [0xf7faff, 0xc1ecff, 0xc1c3ff, 0x9397ff, 0x93f5ff];
         const islands = [];
 
-        for (let i = 0, num = 0; i <= number; i++) {
+        for (let i = 0, num = 0; i < number; i++) {
             const radTops = Math.round(Math.random() * 10);
             const radBottoms = radTops + Math.round(Math.random() * 10);
             const heights = radBottoms - Math.round(Math.round(Math.random() * 10) * 0.5);
@@ -187,9 +206,10 @@ class World1 extends React.Component {
             islands[i] = new this.Island(radTops, radBottoms, heights, radSegs, heightSegs, islandColors[num], opacities);
             islands[i].mesh.receiveShadow = true;
             this.scene.add(islands[i].mesh);
-            islands[i].mesh.position.x = (Math.floor(Math.random() * 10) + 1) * 10 * Math.pow((-1), i);
-            islands[i].mesh.position.y = Math.random() * 10;
-            islands[i].mesh.position.z = Math.random() * 100;
+            islands[i].mesh.position.x = this.gridsVertex[i].x;
+            islands[i].mesh.position.y = this.gridsVertex[i].z;
+            islands[i].mesh.position.z = this.gridsVertex[i].y;
+            // console.log(this.gridsVertex[i]);
         }
     }
 
