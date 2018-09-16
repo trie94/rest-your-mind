@@ -10,6 +10,7 @@ class World2 extends React.Component {
 
         this.createScene = this.createScene.bind(this);
         this.createGrid = this.createGrid.bind(this);
+        this.createLights = this.createLights.bind(this);
         
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -25,7 +26,8 @@ class World2 extends React.Component {
 
         // variables for the base
         this.radius = 160;
-        this.base = Base.Ground();
+        this.base = Base.ground();
+        this.tree = Base.tree();
     }
 
     componentDidMount() {
@@ -67,7 +69,9 @@ class World2 extends React.Component {
 
         // create stuff
         this.createGrid();
+        this.createLights();
         this.scene.add(this.base);
+        this.scene.add(this.tree);
     }
 
     createGrid() {
@@ -135,6 +139,22 @@ class World2 extends React.Component {
             this.pointVertex[i] = pointGeo.vertices[index];
             prevIndex = index;
         }
+    }
+
+    createLights() {
+        let ambientLight = new THREE.AmbientLight(0xbcb1b1, 0.8);
+        this.scene.add(ambientLight);
+
+        let lights = [];
+        lights[0] = new THREE.DirectionalLight(0xffd468, 0.5);
+        lights[0].position.set(0, 1, 0);
+        lights[1] = new THREE.DirectionalLight(0x00bec9, 1);
+        lights[1].position.set(0.75, 1, 0.5);
+        lights[2] = new THREE.DirectionalLight(0xc9007b, 1);
+        lights[2].position.set(-0.75, -1, 0.5);
+        this.scene.add(lights[0]);
+        this.scene.add(lights[1]);
+        this.scene.add(lights[2]);
     }
 
     windowResize() {
