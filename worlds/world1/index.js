@@ -264,7 +264,7 @@ class World1 extends React.Component {
 
     createWaves() {
         const waveGeo = new THREE.RingGeometry(0, this.radius, 20, 20, 20);
-        const waveMat = new THREE.MeshBasicMaterial({
+        const waveMat = new THREE.MeshPhongMaterial({
             color: 0x9ffafa,
             transparent: true,
             opacity: 0.7,

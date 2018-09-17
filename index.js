@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import Home from './worlds/index/index';
 import World1 from './worlds/world1';
 import World2 from './worlds/world2';
+import World3 from './worlds/world3';
 
 import './style.scss';
 
@@ -29,6 +30,7 @@ ReactDom.render(
         <Route exact path ='/' component={Home}/>
         <Route path = '/world1' component={World1}/>
         <Route path = '/world2' component={World2}/>
+        <Route path = '/world3' component={World3}/>
     </Switch>
     </BrowserRouter>,
     document.getElementById('root')
