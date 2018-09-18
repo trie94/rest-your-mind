@@ -15,6 +15,7 @@ class World3 extends React.Component {
         this.createGrid = this.createGrid.bind(this);
         this.createLights = this.createLights.bind(this);
         this.Config = this.Config.bind(this);
+        this.addElementsToScene = this.addElementsToScene.bind(this);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -29,11 +30,19 @@ class World3 extends React.Component {
         this.pointVertex = [];
 
         // variables for the base
-        this.radius = 160;
-        this.base = greenGenerator.ground();
-        this.tree = greenGenerator.tree();
+        this.radius = 150;
+        this.base = greenGenerator.ground(this.radius, this.radius + 10);
+        this.subBase = greenGenerator.ground(50, 75);
+        this.besidesPond = greenGenerator.ground(25, 40);
+        this.besidesPond2 = greenGenerator.ground(5, 10);
+        this.besidesPond3 = greenGenerator.ground(3, 5);
+
+        this.mainTree = greenGenerator.tree(50, 2, 60, 0, 3, 7, 50, 5);
+        this.subTree1 = greenGenerator.tree(30, 2, 30, Math.PI /2, 5, 7, 30, 7);
+        this.subTree2 = greenGenerator.tree(40, 2, 55, Math.PI /3, 4, 9, 40, 6);
         this.pond = pondGenerator.pondBaseObject;
         this.waves = pondGenerator.getWaves();
+        this.stones = pondGenerator.stones;
 
         // dev gui
         this.dat = new dat.GUI();
@@ -52,7 +61,8 @@ class World3 extends React.Component {
     }
 
     Config() {
-        this.color = 0xffa359
+        // this.color = 0xffa359;
+        this.color = 0x8c4a4a;
     }
 
     createScene() {
@@ -76,7 +86,7 @@ class World3 extends React.Component {
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 100, 450);
+        this.camera.position.set(0, 200, 450);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -86,10 +96,7 @@ class World3 extends React.Component {
         // create stuff
         this.createGrid();
         this.createLights();
-        this.scene.add(this.base);
-        this.scene.add(this.tree);
-        this.scene.add(this.pond);
-        this.scene.add(this.waves);
+        this.addElementsToScene();
     }
 
     createGrid() {
@@ -105,7 +112,7 @@ class World3 extends React.Component {
         // set 0 opacity for production
         const material = new THREE.LineBasicMaterial({
             color: config.color,
-            transparent: true,
+            // transparent: true,
             opacity: 0
         });
 
@@ -173,6 +180,50 @@ class World3 extends React.Component {
         this.scene.add(lights[0]);
         this.scene.add(lights[1]);
         this.scene.add(lights[2]);
+    }
+
+    addElementsToScene(){
+
+        this.scene.add(this.base);
+        this.scene.add(this.besidesPond);
+        this.scene.add(this.besidesPond2);
+        this.scene.add(this.besidesPond3);
+        this.scene.add(this.mainTree);
+        this.scene.add(this.subTree1);
+        this.scene.add(this.subTree2);
+        this.scene.add(this.pond);
+        this.scene.add(this.waves);
+
+        for (let i=0; i <this.stones.length; i++){
+            this.scene.add(this.stones[i]);
+            this.stones[i].position.y = (Math.floor(Math.random()*15)+10);
+            this.stones[i].position.z = (Math.floor(Math.random()*30)-30);
+            this.stones[i].position.x = (Math.floor(Math.random()*30)-30);
+            // positioning logic should be changed
+        }
+        
+        this.besidesPond.position.x = 50;
+        this.besidesPond.position.y = 7;
+        this.besidesPond.position.z = 20;
+        
+        this.besidesPond2.position.x = 30;
+        this.besidesPond2.position.y = 7;
+        this.besidesPond2.position.z = 5;
+
+        this.besidesPond3.position.x = 20;
+        this.besidesPond3.position.y = 4;
+        this.besidesPond3.position.z = 5;
+
+        this.mainTree.position.x = 70;
+        this.mainTree.position.y = 30;
+
+        this.subTree1.position.x = 30;
+        this.subTree1.position.y = 20;
+        this.subTree1.position.z = -70;
+
+        this.subTree2.position.x = -60;
+        this.subTree2.position.y = 20;
+        this.subTree2.position.z = -50;
     }
 
     windowResize() {

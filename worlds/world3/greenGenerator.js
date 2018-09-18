@@ -1,13 +1,11 @@
 import * as THREE from 'three';
 
-export function ground() {
+export function ground(topR, bottomR) {
     console.log("create base");
 
-    const groundGeo = new THREE.CylinderGeometry(160, 160, 20, 15);
+    const groundGeo = new THREE.CylinderGeometry(topR, bottomR, 20, 15);
     const groundMat = new THREE.MeshPhongMaterial({
-        color: 0x4f5b20,
-        transparent: true,
-        opacity: 0.9,
+        color: 0x3d4f16,
         flatShading: true
     });
     const ground = new THREE.Object3D();
@@ -17,31 +15,25 @@ export function ground() {
     return ground;
 }
 
-export function tree(){
+export function tree(rad, detail, leavePos, leaveRot, stemUp, stempBottom, stemHeight, stemAngle){
     console.log("create tree");
-    const rad = 50;
-    const leavesGeo = new THREE.TetrahedronGeometry(rad, 2);
+    const leavesGeo = new THREE.TetrahedronGeometry(rad, detail);
     const leavesMat = new THREE.MeshPhongMaterial({
         color: 0x2c8e3c,
         flatShading: true
     });
     const leaves = new THREE.Mesh(leavesGeo, leavesMat);
-    leaves.position.y = rad;
+    leaves.position.y = leavePos;
+    leaves.rotation.x = leaveRot;
 
-    const stemGeo = new THREE.CylinderGeometry(3, 7, 50, 5);
+    const stemGeo = new THREE.CylinderGeometry(stemUp, stempBottom, stemHeight, stemAngle);
     const stemMat = new THREE.MeshBasicMaterial({
         color: 0x4c3c27,
         flatShading: true
     });
     const stem = new THREE.Mesh(stemGeo, stemMat);
-
     const tree = new THREE.Object3D;
     tree.add(leaves);
     tree.add(stem);
-
-    tree.position.x = 70;
-    tree.position.y = 30;
-
-    console.log(tree);
     return tree;
 }
