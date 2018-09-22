@@ -12,7 +12,7 @@ function pondBase(){
     const mat = new THREE.MeshBasicMaterial({
         color: 0x93bcff,
         transparent: true,
-        opacity: 0.7
+        opacity: 0.5
     });
 
     const baseMesh = new THREE.Mesh(geo, mat);

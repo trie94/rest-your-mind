@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const OrbitControls = require('three-orbit-controls')(THREE);
 import * as pondGenerator from './pondGenerator';
 import * as greenGenerator from './greenGenerator';
+import * as creatureGenerator from './creaturesGenerator';
 import * as elementsGenerator from './elementsGenerator';
 import * as dat from 'dat.gui';
 
@@ -37,6 +38,9 @@ class World3 extends React.Component {
         this.besidesPond2 = greenGenerator.ground(5, 10);
         this.besidesPond3 = greenGenerator.ground(3, 5);
 
+        this.creature = creatureGenerator.creature();
+        this.creature2 = creatureGenerator.creatureWithLimbs();
+
         this.mainTree = greenGenerator.tree(50, 2, 60, 0, 3, 7, 50, 5);
         this.subTree1 = greenGenerator.tree(30, 2, 30, Math.PI /2, 5, 7, 30, 7);
         this.subTree2 = greenGenerator.tree(40, 2, 55, Math.PI /3, 4, 9, 40, 6);
@@ -62,7 +66,7 @@ class World3 extends React.Component {
 
     Config() {
         // this.color = 0xffa359;
-        this.color = 0x8c4a4a;
+        this.color = 0xffc37f;
     }
 
     createScene() {
@@ -86,7 +90,7 @@ class World3 extends React.Component {
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 200, 450);
+        this.camera.position.set(0, 100, 450);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -193,6 +197,8 @@ class World3 extends React.Component {
         this.scene.add(this.subTree2);
         this.scene.add(this.pond);
         this.scene.add(this.waves);
+        this.scene.add(this.creature);
+        this.scene.add(this.creature2);
 
         for (let i=0; i <this.stones.length; i++){
             this.scene.add(this.stones[i]);
@@ -200,30 +206,16 @@ class World3 extends React.Component {
             this.stones[i].position.z = (Math.floor(Math.random()*30)-30);
             this.stones[i].position.x = (Math.floor(Math.random()*30)-30);
             // positioning logic should be changed
-        }
-        
-        this.besidesPond.position.x = 50;
-        this.besidesPond.position.y = 7;
-        this.besidesPond.position.z = 20;
-        
-        this.besidesPond2.position.x = 30;
-        this.besidesPond2.position.y = 7;
-        this.besidesPond2.position.z = 5;
+        }        
 
-        this.besidesPond3.position.x = 20;
-        this.besidesPond3.position.y = 4;
-        this.besidesPond3.position.z = 5;
-
-        this.mainTree.position.x = 70;
-        this.mainTree.position.y = 30;
-
-        this.subTree1.position.x = 30;
-        this.subTree1.position.y = 20;
-        this.subTree1.position.z = -70;
-
-        this.subTree2.position.x = -60;
-        this.subTree2.position.y = 20;
-        this.subTree2.position.z = -50;
+        this.besidesPond.position.set(50, 7, 20);
+        this.besidesPond2.position.set(30, 7, 5);
+        this.besidesPond3.position.set(20, 4, 5);
+        this.mainTree.position.set(70, 30, 0);
+        this.subTree1.position.set(30, 20, -70);
+        this.subTree2.position.set(-60, 20, -50);
+        this.creature.position.set(40, 26, 30);
+        this.creature2.position.set(-50, 25, 0);
     }
 
     windowResize() {

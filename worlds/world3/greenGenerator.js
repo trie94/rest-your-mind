@@ -8,11 +8,9 @@ export function ground(topR, bottomR) {
         color: 0x3d4f16,
         flatShading: true
     });
-    const ground = new THREE.Object3D();
-    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
 
-    ground.add(groundMesh);
-    return ground;
+    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+    return groundMesh;
 }
 
 export function tree(rad, detail, leavePos, leaveRot, stemUp, stempBottom, stemHeight, stemAngle){
