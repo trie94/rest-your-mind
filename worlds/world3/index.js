@@ -31,7 +31,7 @@ class World3 extends React.Component {
         this.pointVertex = [];
 
         // variables for the base
-        this.radius = 150;
+        this.radius = 500;
         this.base = greenGenerator.ground(this.radius, this.radius + 10);
         this.subBase = greenGenerator.ground(50, 75);
         this.besidesPond = greenGenerator.ground(25, 40);
@@ -77,7 +77,7 @@ class World3 extends React.Component {
 
         this.scene = new THREE.Scene();
 
-        this.scene.fog = new THREE.Fog(this.config.color, 100, 1200);
+        // this.scene.fog = new THREE.Fog(this.config.color, 100, 1200);
         this.camera = new THREE.PerspectiveCamera(
             60,
             this.WIDTH / this.HEIGHT,
@@ -201,9 +201,8 @@ class World3 extends React.Component {
         this.scene.add(this.waves);
         this.scene.add(this.creature);
         this.scene.add(this.creature2);
-        this.scene.add(this.testArm);
-        console.log(this.testArm.children);
-        this.scene.add(this.helper);
+        // this.scene.add(this.testArm);
+        // this.scene.add(this.helper);
 
         for (let i = 0; i < this.stones.length; i++) {
             this.scene.add(this.stones[i]);
@@ -249,7 +248,7 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
         pondGenerator.moveWaves();
-        this.testArm.children[0].children[0].rotation.x += 0.05;
+        // this.testArm.children[0].children[0].rotation.x += 0.05;
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }

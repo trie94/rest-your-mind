@@ -1,20 +1,25 @@
 import * as THREE from 'three';
+import groundTexture from '../../assets/groundTexture.png';
 
 export function ground(topR, bottomR) {
-    const groundGeo = new THREE.CylinderGeometry(topR, bottomR, 20, 15);
-    const groundMat = new THREE.MeshPhongMaterial({
-        color: 0x3d4f16,
-        flatShading: true
+    const groundObject = new THREE.Object3D();
+    const loader = new THREE.TextureLoader();
+    loader.load(groundTexture, (groundTexture) => {
+        const groundGeo = new THREE.CylinderGeometry(topR, bottomR, 20, 15);
+        const groundMat = new THREE.MeshBasicMaterial({
+            flatShading: true,
+            map: groundTexture
+        });
+        const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+        groundObject.add(groundMesh);
     });
-
-    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
-    return groundMesh;
+    return groundObject;
 }
 
-export function tree(rad, detail, leavePos, leaveRot, stemUp, stempBottom, stemHeight, stemAngle){
+export function tree(rad, detail, leavePos, leaveRot, stemUp, stempBottom, stemHeight, stemAngle) {
     const leavesGeo = new THREE.TetrahedronGeometry(rad, detail);
-    const leavesMat = new THREE.MeshPhongMaterial({
-        color: 0x2c8e3c,
+    const leavesMat = new THREE.MeshBasicMaterial({
+        color: 0x86aa62,
         flatShading: true
     });
     const leaves = new THREE.Mesh(leavesGeo, leavesMat);

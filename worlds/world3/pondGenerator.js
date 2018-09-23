@@ -98,7 +98,7 @@ function Stone1(){
     let color = 0x38342a;
 
     const geo = new THREE.DodecahedronGeometry(rad, 0);
-    const mat = new THREE.MeshPhongMaterial({
+    const mat = new THREE.MeshBasicMaterial({
         color: color,
         flatShading: true
     });
@@ -113,7 +113,7 @@ function Stone2(){
     let color = 0x646658;
 
     const geo = new THREE.TetrahedronGeometry(rad, 1);
-    const mat = new THREE.MeshPhongMaterial({
+    const mat = new THREE.MeshBasicMaterial({
         color: color,
         flatShading: true
     });
