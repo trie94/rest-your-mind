@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 
 export function ground(topR, bottomR) {
-    console.log("create base");
-
     const groundGeo = new THREE.CylinderGeometry(topR, bottomR, 20, 15);
     const groundMat = new THREE.MeshPhongMaterial({
         color: 0x3d4f16,
@@ -14,7 +12,6 @@ export function ground(topR, bottomR) {
 }
 
 export function tree(rad, detail, leavePos, leaveRot, stemUp, stempBottom, stemHeight, stemAngle){
-    console.log("create tree");
     const leavesGeo = new THREE.TetrahedronGeometry(rad, detail);
     const leavesMat = new THREE.MeshPhongMaterial({
         color: 0x2c8e3c,

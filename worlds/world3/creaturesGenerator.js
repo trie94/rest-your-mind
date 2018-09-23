@@ -165,6 +165,7 @@ export function creatureWithLimbs() {
 
     handObj.add(leftHandMesh);
     handObj.add(rightHandMesh);
+
     leftHandMesh.position.set(-7, 0, 0);
     rightHandMesh.position.set(7, 0, 0);
     handObj.position.set(0, 7, 0);
@@ -185,4 +186,60 @@ export function creatureWithLimbs() {
     creatureObj.add(bodyObj);
 
     return creatureObj;
+}
+
+export function BoneTest() {
+    let height = 10;
+    let boneNum = 3;
+    let heightSegment = 5;
+    const armGeo = new THREE.CylinderGeometry(1, 1, height, 12, heightSegment);
+    const armMat = new THREE.MeshBasicMaterial({ color: "black", skinning: true });
+    const armMesh = new THREE.SkinnedMesh(armGeo, armMat);
+
+    //Create the skin indices and skin weights
+    for (let i = 0; i < armGeo.vertices.length; i++) {
+
+        let skinIndex = calculateSkinIndex(height, boneNum, armGeo.vertices, i);
+        let skinWeight = calculateSkinWeight(height, boneNum, armGeo.vertices, i);
+
+        armGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
+        armGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
+    }
+
+    let bones = [];
+    const root = new THREE.Bone();
+    const arm1 = new THREE.Bone();
+    const arm2 = new THREE.Bone();
+
+    root.add(arm1);
+    arm1.add(arm2);
+
+    bones.push(root);
+    bones.push(arm1);
+    bones.push(arm2);
+
+    root.position.y = -6;
+    arm1.position.y = 6;
+    arm2.position.y = 6;
+
+    const armSkeleton = new THREE.Skeleton(bones);
+    armMesh.add(root);
+    armMesh.bind(armSkeleton);
+
+    return armMesh;
+}
+
+export function skeletonHelper(mesh) {
+    const helper = new THREE.SkeletonHelper(mesh);
+    helper.material.linewidth = 3;
+
+    return helper;
+}
+
+function calculateSkinIndex(height, boneNum, vertice, number) {
+    return Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+}
+
+function calculateSkinWeight(height, boneNum, vertice, number) {
+    return ((vertice[number].y + (height / 2)) / height * (boneNum - 1)) - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));   
 }
