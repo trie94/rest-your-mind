@@ -406,22 +406,22 @@ export function creatureWithRigs() {
     return skinMesh;
 }
 
-export function BoneTest() {
-    let height = 10;
+export function limb() {
+    let height = 12;
     let boneNum = 3;
     let heightSegment = 5;
-    const armGeo = new THREE.CylinderGeometry(1, 1, height, 12, heightSegment);
-    const armMat = new THREE.MeshBasicMaterial({ color: "black", skinning: true });
-    const armMesh = new THREE.SkinnedMesh(armGeo, armMat);
+    const limbGeo = new THREE.CylinderGeometry(0.5, 0.5, height, 12, heightSegment);
+    const limbMat = new THREE.MeshBasicMaterial({ color: 0x44403c, skinning: true });
+    const limbMesh = new THREE.SkinnedMesh(limbGeo, limbMat);
 
     //Create the skin indices and skin weights
-    for (let i = 0; i < armGeo.vertices.length; i++) {
+    for (let i = 0; i < limbGeo.vertices.length; i++) {
 
-        let skinIndex = calculateSkinIndex(height, boneNum, armGeo.vertices, i);
-        let skinWeight = calculateSkinWeight(height, boneNum, armGeo.vertices, i);
+        let skinIndex = calculateSkinIndex(height, boneNum, limbGeo.vertices, i);
+        let skinWeight = calculateSkinWeight(height, boneNum, limbGeo.vertices, i);
 
-        armGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
-        armGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
+        limbGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
+        limbGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
     }
 
     let bones = [];
@@ -441,10 +441,10 @@ export function BoneTest() {
     arm2.position.y = 6;
 
     const armSkeleton = new THREE.Skeleton(bones);
-    armMesh.add(root);
-    armMesh.bind(armSkeleton);
+    limbMesh.add(root);
+    limbMesh.bind(armSkeleton);
 
-    return armMesh;
+    return limbMesh;
 }
 
 export function skeletonHelper(mesh) {
