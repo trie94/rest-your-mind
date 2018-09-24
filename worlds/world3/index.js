@@ -49,6 +49,8 @@ class World3 extends React.Component {
         this.pond = pondGenerator.pondBaseObject;
         this.waves = pondGenerator.getWaves();
         this.stones = pondGenerator.stones;
+        this.sky = elementsGenerator.sky();
+        this.house = elementsGenerator.house();
 
         // dev gui
         this.dat = new dat.GUI();
@@ -87,7 +89,6 @@ class World3 extends React.Component {
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         this.renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
         this.renderer.setSize(this.WIDTH, this.HEIGHT);
-        this.renderer.shadowMap.enabled = true;
 
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
@@ -183,6 +184,7 @@ class World3 extends React.Component {
         lights[1].position.set(-0.75, -1, 0.5);
         lights[2] = new THREE.DirectionalLight(0xc9007b, 0.5);
         lights[2].position.set(0.75, -1, 0.5);
+
         this.scene.add(lights[0]);
         this.scene.add(lights[1]);
         this.scene.add(lights[2]);
@@ -201,6 +203,8 @@ class World3 extends React.Component {
         this.scene.add(this.waves);
         this.scene.add(this.creature);
         this.scene.add(this.creature2);
+        this.scene.add(this.sky);
+        this.scene.add(this.house);
         // this.scene.add(this.testArm);
         // this.scene.add(this.helper);
 
@@ -217,10 +221,13 @@ class World3 extends React.Component {
         this.besidesPond3.position.set(20, 4, 5);
         this.mainTree.position.set(70, 30, 0);
         this.subTree1.position.set(30, 20, -70);
-        this.subTree2.position.set(-60, 20, -50);
+        this.subTree2.position.set(-200, 20, -50);
         this.creature.position.set(40, 26, 30);
         this.creature2.position.set(-50, 25, 0);
         this.testArm.position.set(0, 30, 0);
+        this.sky.position.set(0, 350, 0);
+        this.house.position.set(-100, 30, -80);
+        this.house.rotation.y = Math.PI/8;
     }
 
     windowResize() {
@@ -248,7 +255,7 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
         pondGenerator.moveWaves();
-        // this.testArm.children[0].children[0].rotation.x += 0.05;
+        this.testArm.children[0].children[0].rotation.x += 0.05;
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }

@@ -40,7 +40,7 @@ export function creature() {
 
     const coneGeo = new THREE.CylinderGeometry(0.1, 3, 7, 10);
     const coneMat = new THREE.MeshBasicMaterial({
-        color: 0xff9c4c,
+        color: 0x85a495,
         side: THREE.DoubleSide,
         flatShading: true
     });
@@ -52,7 +52,7 @@ export function creature() {
 
     const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 10);
     const bodyMat = new THREE.MeshBasicMaterial({
-        color: 0xff9c4c,
+        color: 0x85a495,
         side: THREE.DoubleSide,
         flatShading: true
     });
