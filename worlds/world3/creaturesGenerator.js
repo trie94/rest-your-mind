@@ -196,108 +196,9 @@ export function creatureWithRigs() {
     const bodyObj = new THREE.Object3D();
     const rigObj = new THREE.Object3D();
 
-    // arm
     let height = 10;
-    let boneNum = 3;
+    let boneNum = 6;
     let heightSegment = 5;
-    const geo = new THREE.CylinderGeometry(1, 1, height, 12, heightSegment);
-    const mat = new THREE.MeshBasicMaterial({
-        color: "black",
-        skinning: true,
-        transparent: true,
-        opacity: 0.7
-    });
-    const skinMesh = new THREE.SkinnedMesh(geo, mat);
-
-    //Create the skin indices and skin weights
-    for (let i = 0; i < geo.vertices.length; i++) {
-
-        let skinIndex = calculateSkinIndex(height, boneNum, geo.vertices, i);
-        let skinWeight = calculateSkinWeight(height, boneNum, geo.vertices, i);
-
-        geo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
-        geo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
-    }
-
-    let bones = [];
-    const root = new THREE.Bone();
-    const head = new THREE.Bone();
-    const leftArm1 = new THREE.Bone();
-    const leftArm2 = new THREE.Bone();
-    const rightArm1 = new THREE.Bone();
-    const rightArm2 = new THREE.Bone();
-    const pelvis = new THREE.Bone();
-    const leftLeg1 = new THREE.Bone();
-    const leftLeg2 = new THREE.Bone();
-    const rightLeg1 = new THREE.Bone();
-    const rightLeg2 = new THREE.Bone();
-
-    // parenting
-    root.add(head);
-    root.add(leftArm1);
-    leftArm1.add(leftArm2);
-    root.add(rightArm1);
-    rightArm1.add(rightArm2);
-    root.add(pelvis);
-    pelvis.add(leftLeg1);
-    leftLeg1.add(leftLeg2);
-    pelvis.add(rightLeg1);
-    rightLeg1.add(rightLeg2);
-
-    // push bones
-    bones.push(root);
-    bones.push(head);
-    bones.push(leftArm1);
-    bones.push(leftArm2);
-    bones.push(rightArm1);
-    bones.push(rightArm2);
-    bones.push(pelvis);
-    bones.push(leftLeg1);
-    bones.push(leftLeg2);
-    bones.push(rightLeg1);
-    bones.push(rightLeg2);
-
-    root.position.y = 0;
-    head.position.y = 5;
-    pelvis.position.y = -10;
-
-    leftArm1.position.x = -5;
-    leftArm1.position.y = 0;
-
-    leftArm2.position.x = -5;
-    leftArm2.position.y = 0;
-
-    rightArm1.position.x = 5;
-    rightArm1.position.y = 0;
-
-    rightArm2.position.x = 5;
-    rightArm2.position.y = 0;
-    
-    leftLeg1.position.x = -5;
-    leftLeg1.position.y = -5;
-
-    leftLeg2.position.x = -5;
-    leftLeg2.position.y = -5;
-
-    rightLeg1.position.x = 5;
-    rightLeg1.position.y = -5;
-
-    rightLeg2.position.x = 5;
-    rightLeg2.position.y = -5;
-
-    const skeleton = new THREE.Skeleton(bones);
-    skinMesh.add(root);
-    skinMesh.bind(skeleton);
-
-    // face
-    const faceGeo = new THREE.SphereGeometry(8, 10, 10);
-    const faceMat = new THREE.MeshBasicMaterial({
-        color: 0xefe9e3,
-        side: THREE.DoubleSide,
-        flatShading: true,
-        // transparent: true,
-        // opacity: 0.6
-    });
 
     const eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
     const eyeMat = new THREE.MeshBasicMaterial({
@@ -327,6 +228,14 @@ export function creatureWithRigs() {
     faceObj.add(rightEyeMesh);
     faceObj.add(mouthMesh);
 
+    // face
+    const faceGeo = new THREE.SphereGeometry(8, 10, 10);
+    const faceMat = new THREE.MeshBasicMaterial({
+        color: 0xefe9e3,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+
     const faceMesh = new THREE.Mesh(faceGeo, faceMat);
     faceObj.add(faceMesh);
     faceObj.position.y = 16;
@@ -343,17 +252,142 @@ export function creatureWithRigs() {
     coneHat.rotation.z = Math.PI * 1 / 6;
     faceObj.add(coneHat);
 
-    const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 10);
+    const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 12, heightSegment);
     const bodyMat = new THREE.MeshBasicMaterial({
         color: 0xe58b61,
-        side: THREE.DoubleSide,
-        flatShading: true,
+        skinning: true,
         // transparent: true,
         // opacity: 0.5
     });
+    const skinMesh = new THREE.SkinnedMesh(bodyGeo, bodyMat);
 
-    const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
-    bodyObj.add(bodyMesh);
+    const entireGeo = new THREE.Geometry();
+    const leftLegGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
+    const rightLegGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
+    const legMat = new THREE.MeshBasicMaterial({
+        color: 0x44403c,
+        // skinning: true
+    });
+
+    // leftLegGeo.rotateZ(Math.PI);
+    // rightLegGeo.rotateZ(-Math.PI);
+    leftLegGeo.translate(-height / 4, -height, 0);
+    rightLegGeo.translate(height / 4, -height, 0);
+
+    entireGeo.merge(bodyGeo);
+    // entireGeo.merge(leftLegGeo);
+    // entireGeo.merge(rightLegGeo);
+
+    const entireBodyMesh = new THREE.SkinnedMesh(entireGeo, bodyMat);
+    const armMesh = new THREE.Mesh(leftLegGeo, legMat);
+    // armMesh.rotation.z = Math.PI/2;
+
+    //Create the skin indices and skin weights
+    for (let i = 0; i < entireGeo.vertices.length; i++) {
+
+        let skinIndex = calculateSkinIndex(30, 6, entireGeo.vertices, i);
+        let skinWeight = calculateSkinWeight(30, 6, entireGeo.vertices, i);
+
+        entireGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
+        entireGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
+    }
+
+    let bones = [];
+    const root = new THREE.Bone();
+    const head = new THREE.Bone();
+    const leftArm1 = new THREE.Bone();
+    const leftArm2 = new THREE.Bone();
+    const rightArm1 = new THREE.Bone();
+    const rightArm2 = new THREE.Bone();
+    const pelvis = new THREE.Bone();
+    const leftLeg1 = new THREE.Bone();
+    const leftLeg2 = new THREE.Bone();
+    const rightLeg1 = new THREE.Bone();
+    const rightLeg2 = new THREE.Bone();
+
+    // hierarchy
+    root.add(head);
+    // root.add(leftArm1);
+    // leftArm1.add(leftArm2);
+    // root.add(rightArm1);
+    // rightArm1.add(rightArm2);
+    root.add(pelvis);
+    pelvis.add(leftLeg1);
+    leftLeg1.add(leftLeg2);
+    pelvis.add(rightLeg1);
+    rightLeg1.add(rightLeg2);
+
+    // push bones
+    bones.push(root);
+    bones.push(head);
+    // bones.push(leftArm1);
+    // bones.push(leftArm2);
+    // bones.push(rightArm1);
+    // bones.push(rightArm2);
+    bones.push(pelvis);
+    bones.push(leftLeg1);
+    bones.push(leftLeg2);
+    bones.push(rightLeg1);
+    bones.push(rightLeg2);
+
+    root.position.y = height / 2 + 2;
+    head.position.y = height;
+    pelvis.position.y = -height;
+
+    // leftArm1.position.x = -height / 2;
+    // leftArm1.position.y = 0;
+
+    // leftArm2.position.x = -height / 2;
+    // leftArm2.position.y = 0;
+
+    // rightArm1.position.x = height / 2;
+    // rightArm1.position.y = 0;
+
+    // rightArm2.position.x = height / 2;
+    // rightArm2.position.y = 0;
+
+    leftLeg1.position.x = -height / 4;
+    leftLeg1.position.y = -height / 2;
+
+    leftLeg2.position.x = 0;
+    leftLeg2.position.y = -height / 2;
+
+    rightLeg1.position.x = height / 4;
+    rightLeg1.position.y = -height / 2;
+
+    rightLeg2.position.x = 0;
+    rightLeg2.position.y = -height / 2;
+
+    // if not using skinned mesh just bone.add(mesh)
+    head.add(faceMesh);
+    head.add(leftEyeMesh);
+    head.add(rightEyeMesh);
+    head.add(coneHat);
+    head.add(mouthMesh);
+
+    // leftArm1.add(armMesh);
+
+    const skeleton = new THREE.Skeleton(bones);
+    skinMesh.add(root);
+    skinMesh.position.y = -10;
+
+    // position before bind
+    skinMesh.bind(skeleton);
+
+    entireBodyMesh.add(root);
+    entireBodyMesh.bind(skeleton);
+
+    // const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 10);
+    // const bodyMat = new THREE.MeshBasicMaterial({
+    //     color: 0xe58b61,
+    //     side: THREE.DoubleSide,
+    //     flatShading: true,
+    //     // transparent: true,
+    //     // opacity: 0.5
+    // });
+
+    // const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+    // bodyObj.add(bodyMesh);
 
     const handPointsArray = [
         new THREE.Vector3(-4, 0, 0),
@@ -403,11 +437,11 @@ export function creatureWithRigs() {
     creatureObj.add(faceObj);
     creatureObj.add(bodyObj);
 
-    return skinMesh;
+    return entireBodyMesh;
 }
 
 export function limb() {
-    let height = 12;
+    let height = 10;
     let boneNum = 3;
     let heightSegment = 5;
     const limbGeo = new THREE.CylinderGeometry(0.5, 0.5, height, 12, heightSegment);
@@ -436,15 +470,107 @@ export function limb() {
     bones.push(arm1);
     bones.push(arm2);
 
-    root.position.y = -6;
-    arm1.position.y = 6;
-    arm2.position.y = 6;
+    root.position.y = -1 * height / 2;
+    arm1.position.y = height / 2;
+    arm2.position.y = height / 2;
 
     const armSkeleton = new THREE.Skeleton(bones);
     limbMesh.add(root);
     limbMesh.bind(armSkeleton);
 
     return limbMesh;
+}
+
+export function spine() {
+    let height = 20;
+    let boneNum = 3;
+    let heightSegment = 5;
+    const spineGeo = new THREE.CylinderGeometry(3, 7, height, 12, heightSegment);
+    const spineMat = new THREE.MeshBasicMaterial({ color: 0x85a495, skinning: true });
+    const spineMesh = new THREE.SkinnedMesh(spineGeo, spineMat);
+
+    //Create the skin indices and skin weights
+    for (let i = 0; i < spineGeo.vertices.length; i++) {
+
+        let skinIndex = calculateSkinIndex(height, boneNum, spineGeo.vertices, i);
+        let skinWeight = calculateSkinWeight(height, boneNum, spineGeo.vertices, i);
+
+        spineGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
+        spineGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
+    }
+
+    let bones = [];
+    const root = new THREE.Bone();
+    const spine = new THREE.Bone();
+    const pelvis = new THREE.Bone();
+
+    root.add(spine);
+    spine.add(pelvis);
+
+    bones.push(root);
+    bones.push(spine);
+    bones.push(pelvis);
+
+    root.position.y = -1 * height / 2;
+    spine.position.y = height / 2;
+    pelvis.position.y = height / 2;
+
+    const spineSkeleton = new THREE.Skeleton(bones);
+    spineMesh.add(root);
+    spineMesh.bind(spineSkeleton);
+    return spineMesh;
+}
+
+export function face() {
+    const faceObj = new THREE.Object3D();
+
+    const faceGeo = new THREE.SphereGeometry(8, 10, 10);
+    const faceMat = new THREE.MeshBasicMaterial({
+        color: 0xefe9e3,
+        side: THREE.DoubleSide,
+        flatShading: true,
+        // transparent: true,
+        // opacity: 0.6
+    });
+
+    const eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
+    const eyeMat = new THREE.MeshBasicMaterial({
+        color: 0x44403c,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+    const mouthGeo = new THREE.CylinderGeometry(0.35, 0.35, 2);
+
+    const leftEyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
+    const rightEyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
+    const mouthMesh = new THREE.Mesh(mouthGeo, eyeMat);
+
+    leftEyeMesh.position.set(3.5, 0, 7);
+    rightEyeMesh.position.set(-3.5, 0, 7);
+    mouthMesh.position.set(0, -1, 7.5);
+    mouthMesh.rotation.z = Math.PI / 2;
+
+    faceObj.add(leftEyeMesh);
+    faceObj.add(rightEyeMesh);
+    faceObj.add(mouthMesh);
+
+    const faceMesh = new THREE.Mesh(faceGeo, faceMat);
+    faceObj.add(faceMesh);
+    faceObj.position.y = 16;
+
+    const coneGeo = new THREE.CylinderGeometry(0.1, 3, 7, 10);
+    const coneMat = new THREE.MeshBasicMaterial({
+        color: 0x85a495,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+
+    const coneHat = new THREE.Mesh(coneGeo, coneMat);
+    coneHat.position.set(5, 9, 0);
+    coneHat.rotation.z = -Math.PI * 1 / 6;
+    faceObj.add(coneHat);
+
+    return faceObj;
 }
 
 export function skeletonHelper(mesh) {
@@ -459,5 +585,6 @@ function calculateSkinIndex(height, boneNum, vertice, number) {
 }
 
 function calculateSkinWeight(height, boneNum, vertice, number) {
-    return ((vertice[number].y + (height / 2)) / height * (boneNum - 1)) - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    return ((vertice[number].y + (height / 2)) / height * (boneNum - 1))
+        - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
 }
