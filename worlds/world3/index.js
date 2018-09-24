@@ -39,9 +39,10 @@ class World3 extends React.Component {
         this.besidesPond3 = greenGenerator.ground(3, 5);
 
         this.testArm = creatureGenerator.BoneTest();
-        this.helper = creatureGenerator.skeletonHelper(this.testArm);
         this.creature = creatureGenerator.creature();
         this.creature2 = creatureGenerator.creatureWithLimbs();
+        this.creature3 = creatureGenerator.creatureWithRigs();
+        this.helper = creatureGenerator.skeletonHelper(this.creature3);
 
         this.mainTree = greenGenerator.tree(50, 2, 60, 0, 3, 7, 50, 5);
         this.subTree1 = greenGenerator.tree(30, 2, 30, Math.PI / 2, 5, 7, 30, 7);
@@ -203,18 +204,19 @@ class World3 extends React.Component {
         this.scene.add(this.waves);
         this.scene.add(this.creature);
         this.scene.add(this.creature2);
+        this.scene.add(this.creature3);
         this.scene.add(this.sky);
         this.scene.add(this.house);
         // this.scene.add(this.testArm);
-        // this.scene.add(this.helper);
+        this.scene.add(this.helper);
 
-        for (let i = 0; i < this.stones.length; i++) {
-            this.scene.add(this.stones[i]);
-            this.stones[i].position.y = (Math.floor(Math.random() * 15) + 10);
-            this.stones[i].position.z = (Math.floor(Math.random() * 30) - 30);
-            this.stones[i].position.x = (Math.floor(Math.random() * 30) - 30);
-            // positioning logic should be changed
-        }
+        // for (let i = 0; i < this.stones.length; i++) {
+        //     this.scene.add(this.stones[i]);
+        //     this.stones[i].position.y = (Math.floor(Math.random() * 15) + 10);
+        //     this.stones[i].position.z = (Math.floor(Math.random() * 30) - 30);
+        //     this.stones[i].position.x = (Math.floor(Math.random() * 30) - 30);
+        //     // positioning logic should be changed
+        // }
 
         this.besidesPond.position.set(50, 7, 20);
         this.besidesPond2.position.set(30, 7, 5);
@@ -224,6 +226,7 @@ class World3 extends React.Component {
         this.subTree2.position.set(-200, 20, -50);
         this.creature.position.set(40, 26, 30);
         this.creature2.position.set(-50, 25, 0);
+        this.creature3.position.set(0, 25, 100);
         this.testArm.position.set(0, 30, 0);
         this.sky.position.set(0, 350, 0);
         this.house.position.set(-100, 30, -80);
@@ -255,7 +258,7 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
         pondGenerator.moveWaves();
-        this.testArm.children[0].children[0].rotation.x += 0.05;
+        // this.creature3.children[0].children[0].rotation.z += 0.05;
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }
