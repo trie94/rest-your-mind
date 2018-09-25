@@ -292,8 +292,8 @@ class World3 extends React.Component {
     }
 
     animate() {
-        const time = Date.now() * 0.001;
-        const angle = Math.sin(time);
+        const time = Date.now() * 0.004;
+        const angle = Math.sin(time) / 8;
 
         this.controls.update();
         this.colorControl.onChange((color) => {
@@ -301,16 +301,10 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
         pondGenerator.moveWaves();
-        // this.leftArm.children[0].children[0].rotation.z += 0.001;
-
-        // this.leftLeg.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
-        // this.rightLeg.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
-        // this.spine.children[0].children[0].rotation.x = (Math.PI * angle) / 4;
-
-        this.creature3.children[0].rotation.x = (Math.PI * angle) / 4;
-        this.creature3.children[0].children[0].rotation.x = (Math.PI * angle) / 4;
-        this.creature3.children[0].children[0].children[0].rotation.x = (Math.PI * angle) / 4;
-        this.creature3.children[0].children[0].children[0].children[0].rotation.x = (Math.PI * angle) / 4;
+        this.creature3.children[0].rotation.y = (Math.PI * angle) / 4;
+        // this.creature3.children[0].children[0].rotation.x = (Math.PI * angle) / 4;
+        this.creature3.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        // this.creature3.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
         
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
