@@ -238,8 +238,6 @@ class World3 extends React.Component {
         this.scene.add(this.helper6);
         this.scene.add(this.creatureWithSkeleton);
 
-        console.log(this.creature3.children[0].children[1].children[0]);
-
         // for (let i = 0; i < this.stones.length; i++) {
         //     this.scene.add(this.stones[i]);
         //     this.stones[i].position.y = (Math.floor(Math.random() * 15) + 10);
@@ -271,6 +269,8 @@ class World3 extends React.Component {
         this.sky.position.set(0, 350, 0);
         this.house.position.set(-100, 30, -80);
         this.house.rotation.y = Math.PI / 8;
+
+        console.log(this.creature3.children[0].children[0].children[0]);
     }
 
     windowResize() {
@@ -303,13 +303,14 @@ class World3 extends React.Component {
         pondGenerator.moveWaves();
         // this.leftArm.children[0].children[0].rotation.z += 0.001;
 
-        this.leftArm.children[0].children[0].rotation.z = (Math.PI * angle) / 4;;
-        this.rightArm.children[0].children[0].rotation.z = (Math.PI * angle) / 4;;
-        this.spine.children[0].children[0].rotation.z = (Math.PI * angle) / 4;;
+        // this.leftLeg.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        // this.rightLeg.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        // this.spine.children[0].children[0].rotation.x = (Math.PI * angle) / 4;
 
-        // this.creature3.children[0].rotation.z = (Math.PI * angle) / 4;
-        this.creature3.children[0].rotation.z = (Math.PI * angle) / 4;
-        // this.creature3.children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        this.creature3.children[0].rotation.x = (Math.PI * angle) / 4;
+        this.creature3.children[0].children[0].rotation.x = (Math.PI * angle) / 4;
+        this.creature3.children[0].children[0].children[0].rotation.x = (Math.PI * angle) / 4;
+        this.creature3.children[0].children[0].children[0].children[0].rotation.x = (Math.PI * angle) / 4;
         
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
