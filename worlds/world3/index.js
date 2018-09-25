@@ -47,12 +47,14 @@ class World3 extends React.Component {
         this.creature = creatureGenerator.creature();
         this.creature2 = creatureGenerator.creatureWithLimbs();
         this.creature3 = creatureGenerator.creatureWithRigs();
+        this.creature4 = creatureGenerator.creatureWithRigs2();
         this.helper = creatureGenerator.skeletonHelper(this.creature3);
-        this.helper2 = creatureGenerator.skeletonHelper(this.leftArm);
-        this.helper3 = creatureGenerator.skeletonHelper(this.rightArm);
-        this.helper4 = creatureGenerator.skeletonHelper(this.leftLeg);
-        this.helper5 = creatureGenerator.skeletonHelper(this.rightLeg);
-        this.helper6 = creatureGenerator.skeletonHelper(this.spine);
+        this.helper2 = creatureGenerator.skeletonHelper(this.creature4);
+        this.helper3 = creatureGenerator.skeletonHelper(this.leftArm);
+        this.helper4 = creatureGenerator.skeletonHelper(this.rightArm);
+        this.helper5 = creatureGenerator.skeletonHelper(this.leftLeg);
+        this.helper6 = creatureGenerator.skeletonHelper(this.rightLeg);
+        this.helper7 = creatureGenerator.skeletonHelper(this.spine);
 
         this.creatureWithSkeleton = new THREE.Object3D();
         this.creatureWithSkeleton.add(this.face);
@@ -223,6 +225,7 @@ class World3 extends React.Component {
         this.scene.add(this.creature);
         this.scene.add(this.creature2);
         this.scene.add(this.creature3);
+        this.scene.add(this.creature4);
         this.scene.add(this.sky);
         this.scene.add(this.house);
         // this.scene.add(this.spine);
@@ -231,11 +234,12 @@ class World3 extends React.Component {
         // this.scene.add(this.leftLeg);
         // this.scene.add(this.rightLeg);
         this.scene.add(this.helper);
-        this.scene.add(this.helper2);
+        // this.scene.add(this.helper2);
         this.scene.add(this.helper3);
         this.scene.add(this.helper4);
         this.scene.add(this.helper5);
         this.scene.add(this.helper6);
+        this.scene.add(this.helper7);
         this.scene.add(this.creatureWithSkeleton);
 
         // for (let i = 0; i < this.stones.length; i++) {
@@ -255,6 +259,7 @@ class World3 extends React.Component {
         this.creature.position.set(20, 25, 0);
         this.creature2.position.set(-50, 25, 0);
         this.creature3.position.set(0, 25, 50);
+        this.creature4.position.set(30, 25, 50);
 
         this.face.position.set(0, 35, 0);
         this.spine.position.set(0, 20, 0);
@@ -270,7 +275,7 @@ class World3 extends React.Component {
         this.house.position.set(-100, 30, -80);
         this.house.rotation.y = Math.PI / 8;
 
-        console.log(this.creature3.children[0].children[0].children[0]);
+        console.log(this.creature4.children[0].children[0].children[0].children[0].children[2]);
     }
 
     windowResize() {
@@ -302,9 +307,15 @@ class World3 extends React.Component {
         });
         pondGenerator.moveWaves();
         this.creature3.children[0].rotation.y = (Math.PI * angle) / 4;
-        // this.creature3.children[0].children[0].rotation.x = (Math.PI * angle) / 4;
         this.creature3.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
-        // this.creature3.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        
+        this.creature4.children[0].rotation.y = (Math.PI * angle) / 4;
+        // this.creature4.children[0].children[0].children[0].rotation.y = (Math.PI * angle);
+        this.creature4.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 64;
+        this.creature4.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 16;
+        this.creature4.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 64;
+        this.creature4.children[0].children[0].children[0].children[0].children[0].children[0].children[0].rotation.x = (Math.PI * angle);
+        this.creature4.children[0].children[0].children[0].children[0].children[0].children[0].children[1].rotation.x = (-Math.PI * angle);
         
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);

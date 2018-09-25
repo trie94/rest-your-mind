@@ -188,11 +188,12 @@ export function creatureWithLimbs() {
     return creatureObj;
 }
 
+// red guy
 export function creatureWithRigs() {
     const faceObj = new THREE.Object3D();
 
     let height = 10;
-    let boneNum = 5;
+    let boneNum = 9;
     let heightSegment = 10;
 
     const eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
@@ -325,6 +326,176 @@ export function creatureWithRigs() {
     leftHand.position.y = -3;
     leftHand.position.x = -5;
     rightHand.position.y = -3;
+    rightHand.position.x = 5;
+
+    leftLeg.position.y = -5;
+    leftLeg.position.x = -2;
+    rightLeg.position.y = -5;
+    rightLeg.position.x = 2;
+
+
+    // if not using skinned mesh just bone.add(mesh)
+    root.add(faceMesh);
+    root.add(leftEyeMesh);
+    root.add(rightEyeMesh);
+    root.add(coneHat);
+    root.add(mouthMesh);
+
+    leftLeg.add(leftLegMesh);
+    rightLeg.add(rightLegMesh);
+    leftHand.add(leftHandMesh);
+    rightHand.add(rightHandMesh);
+
+    const skeleton = new THREE.Skeleton(bones);
+    skinMesh.add(root);
+    skinMesh.position.y = -10;
+
+    // position before bind
+    skinMesh.add(root);
+    skinMesh.bind(skeleton);
+    
+    return skinMesh;
+}
+
+// black guy
+export function creatureWithRigs2() {
+    const faceObj = new THREE.Object3D();
+
+    let height = 10;
+    let boneNum = 9;
+    let heightSegment = 10;
+
+    const eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
+    const eyeMat = new THREE.MeshBasicMaterial({
+        color: 0x44403c,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+
+    const leftEyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
+    const rightEyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
+
+    const mouthPointsArray = [
+        new THREE.Vector3(-1.5, 0, 0),
+        new THREE.Vector3(0, 0.5, 0),
+        new THREE.Vector3(1.5, 0, 0)];
+
+    const mouthCurve = new THREE.CatmullRomCurve3(mouthPointsArray);
+    const mouthGeo = new THREE.TubeGeometry(mouthCurve, 20, 0.5, 5);
+    const mouthMesh = new THREE.Mesh(mouthGeo, eyeMat);
+
+    leftEyeMesh.position.set(3.5, 0, 7);
+    rightEyeMesh.position.set(-3.5, 0, 7);
+    mouthMesh.position.set(0, -0.5, 7.5);
+    mouthMesh.rotation.z = Math.PI;
+
+    faceObj.add(leftEyeMesh);
+    faceObj.add(rightEyeMesh);
+    faceObj.add(mouthMesh);
+
+    // face
+    const faceGeo = new THREE.SphereGeometry(8, 10, 10);
+    const faceMat = new THREE.MeshBasicMaterial({
+        color: 0xefe9e3,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+
+    const faceMesh = new THREE.Mesh(faceGeo, faceMat);
+    faceObj.add(faceMesh);
+    faceObj.position.y = 16;
+
+    const coneGeo = new THREE.CylinderGeometry(0.1, 3, 7, 10);
+    const coneMat = new THREE.MeshBasicMaterial({
+        color: 0x44403c,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+
+    const coneHat = new THREE.Mesh(coneGeo, coneMat);
+    coneHat.position.set(5, 9, 0);
+    coneHat.rotation.z = -Math.PI * 1 / 6;
+    faceObj.add(coneHat);
+
+    const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 12, heightSegment);
+    const bodyMat = new THREE.MeshBasicMaterial({
+        color: 0x44403c,
+        skinning: true,
+        // transparent: true,
+        // opacity: 0.5
+    });
+    const skinMesh = new THREE.SkinnedMesh(bodyGeo, bodyMat);
+
+    const leftLegGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
+    const rightLegGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
+    const limbMat = new THREE.MeshBasicMaterial({
+        color: 0x44403c,
+        // skinning: true
+    });
+
+    const leftLegMesh = new THREE.Mesh(leftLegGeo, limbMat);
+    const rightLegMesh = new THREE.Mesh(rightLegGeo, limbMat);
+
+    const leftHandGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
+    const rightHandGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
+
+    const leftHandMesh = new THREE.Mesh(leftHandGeo, limbMat);
+    const rightHandMesh = new THREE.Mesh(rightHandGeo, limbMat);
+    leftHandMesh.rotateZ(Math.PI/2);
+    rightHandMesh.rotateZ(Math.PI/2);
+
+    //Create the skin indices and skin weights
+    for (let i = 0; i < bodyGeo.vertices.length; i++) {
+
+        let skinIndex = calculateSkinIndex(30, 6, bodyGeo.vertices, i);
+        let skinWeight = calculateSkinWeight(30, 6, bodyGeo.vertices, i);
+
+        bodyGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
+        bodyGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
+    }
+
+    let bones = [];
+    const root = new THREE.Bone();
+    const head = new THREE.Bone();
+    const spine1 = new THREE.Bone();
+    const spine2 = new THREE.Bone();
+    const spine3 = new THREE.Bone();
+    const spine4 = new THREE.Bone();
+    const leftLeg = new THREE.Bone();
+    const rightLeg = new THREE.Bone();
+    const leftHand = new THREE.Bone();
+    const rightHand = new THREE.Bone();
+
+    // hierarchy
+    root.add(head);
+    head.add(spine1);
+    spine1.add(spine2);
+    spine2.add(spine3);
+    spine2.add(leftHand);
+    spine2.add(rightHand);
+    spine3.add(spine4);
+    spine4.add(leftLeg);
+    spine4.add(rightLeg);
+
+    // push bones
+    bones.push(root);
+    bones.push(head);
+    bones.push(spine1);
+    bones.push(spine2);
+    bones.push(spine3);
+    bones.push(leftHand);
+    bones.push(rightHand);
+    bones.push(leftLeg);
+    bones.push(rightLeg);
+
+    root.position.y = 15;
+    head.position.y = 0;
+    spine1.position.y = -3;
+    spine2.position.y = -5;
+    spine3.position.y = -5;
+    spine4.position.y = -5;
+
+    leftHand.position.x = -5;
     rightHand.position.x = 5;
 
     leftLeg.position.y = -5;
