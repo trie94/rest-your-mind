@@ -291,20 +291,16 @@ export function creatureWithRigs() {
     const spine1 = new THREE.Bone();
     const spine2 = new THREE.Bone();
     const spine3 = new THREE.Bone();
-    const leftLeg = new THREE.Bone();
-    const rightLeg = new THREE.Bone();
-    const leftHand = new THREE.Bone();
-    const rightHand = new THREE.Bone();
+    const spine4 = new THREE.Bone();
+    const spine5 = new THREE.Bone();
 
     // hierarchy
     root.add(head);
     head.add(spine1);
     spine1.add(spine2);
-    spine1.add(leftHand);
-    spine1.add(rightHand);
     spine2.add(spine3);
-    spine3.add(leftLeg);
-    spine3.add(rightLeg);
+    spine3.add(spine4);
+    spine4.add(spine5);
 
     // push bones
     bones.push(root);
@@ -312,39 +308,23 @@ export function creatureWithRigs() {
     bones.push(spine1);
     bones.push(spine2);
     bones.push(spine3);
-    bones.push(leftHand);
-    bones.push(rightHand);
-    bones.push(leftLeg);
-    bones.push(rightLeg);
+    bones.push(spine4);
+    bones.push(spine5);
 
-    root.position.y = 15;
+    root.position.y = -10;
     head.position.y = 0;
-    spine1.position.y = -5;
-    spine2.position.y = -10;
-    spine3.position.y = -10;
-
-    leftHand.position.y = -3;
-    leftHand.position.x = -5;
-    rightHand.position.y = -3;
-    rightHand.position.x = 5;
-
-    leftLeg.position.y = -5;
-    leftLeg.position.x = -2;
-    rightLeg.position.y = -5;
-    rightLeg.position.x = 2;
-
+    spine1.position.y = 5;
+    spine2.position.y = 5;
+    spine3.position.y = 5;
+    spine4.position.y = 5;
+    spine5.position.y = 5;
 
     // if not using skinned mesh just bone.add(mesh)
-    root.add(faceMesh);
-    root.add(leftEyeMesh);
-    root.add(rightEyeMesh);
-    root.add(coneHat);
-    root.add(mouthMesh);
-
-    leftLeg.add(leftLegMesh);
-    rightLeg.add(rightLegMesh);
-    leftHand.add(leftHandMesh);
-    rightHand.add(rightHandMesh);
+    spine5.add(faceMesh);
+    spine5.add(leftEyeMesh);
+    spine5.add(rightEyeMesh);
+    spine5.add(coneHat);
+    spine5.add(mouthMesh);
 
     const skeleton = new THREE.Skeleton(bones);
     skinMesh.add(root);

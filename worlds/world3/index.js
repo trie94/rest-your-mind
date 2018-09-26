@@ -228,27 +228,6 @@ class World3 extends React.Component {
         this.scene.add(this.creature4);
         this.scene.add(this.sky);
         this.scene.add(this.house);
-        // this.scene.add(this.spine);
-        // this.scene.add(this.leftArm);
-        // this.scene.add(this.rightArm);
-        // this.scene.add(this.leftLeg);
-        // this.scene.add(this.rightLeg);
-        this.scene.add(this.helper);
-        // this.scene.add(this.helper2);
-        this.scene.add(this.helper3);
-        this.scene.add(this.helper4);
-        this.scene.add(this.helper5);
-        this.scene.add(this.helper6);
-        this.scene.add(this.helper7);
-        this.scene.add(this.creatureWithSkeleton);
-
-        // for (let i = 0; i < this.stones.length; i++) {
-        //     this.scene.add(this.stones[i]);
-        //     this.stones[i].position.y = (Math.floor(Math.random() * 15) + 10);
-        //     this.stones[i].position.z = (Math.floor(Math.random() * 30) - 30);
-        //     this.stones[i].position.x = (Math.floor(Math.random() * 30) - 30);
-        //     // positioning logic should be changed
-        // }
 
         this.besidesPond.position.set(50, 7, 20);
         this.besidesPond2.position.set(30, 7, 5);
@@ -258,18 +237,8 @@ class World3 extends React.Component {
         this.subTree2.position.set(-200, 20, -50);
         this.creature.position.set(20, 25, 0);
         this.creature2.position.set(-50, 25, 0);
-        this.creature3.position.set(0, 25, 50);
+        this.creature3.position.set(0, 20, 100);
         this.creature4.position.set(30, 25, 50);
-
-        this.face.position.set(0, 35, 0);
-        this.spine.position.set(0, 20, 0);
-        this.leftArm.position.set(-7, 26, 0);
-        this.leftArm.rotation.z = Math.PI / 2;
-        this.rightArm.position.set(7, 26, 0);
-        this.rightArm.rotation.z = -Math.PI / 2;
-        this.leftLeg.position.set(-2, 10, 0);
-        this.rightLeg.position.set(2, 10, 0);
-        this.creatureWithSkeleton.position.set(-20, 5, 50);
 
         this.sky.position.set(0, 350, 0);
         this.house.position.set(-100, 30, -80);
@@ -307,7 +276,11 @@ class World3 extends React.Component {
         });
         pondGenerator.moveWaves();
         this.creature3.children[0].rotation.y = (Math.PI * angle) / 4;
-        this.creature3.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        this.creature3.children[0].children[0].rotation.z = (Math.PI * angle) / 8;
+        this.creature3.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
+        this.creature3.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
+        this.creature3.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
+        this.creature3.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
         
         this.creature4.children[0].rotation.y = (Math.PI * angle) / 4;
         // this.creature4.children[0].children[0].children[0].rotation.y = (Math.PI * angle);
