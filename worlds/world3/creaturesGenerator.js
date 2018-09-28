@@ -248,7 +248,7 @@ export function creatureWithRigs() {
     coneHat.rotation.z = Math.PI * 1 / 6;
     faceObj.add(coneHat);
 
-    const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 12, heightSegment);
+    const bodyGeo = new THREE.CylinderGeometry(3, 7, 20, 30, heightSegment);
     const bodyMat = new THREE.MeshBasicMaterial({
         color: 0xe58b61,
         skinning: true,
@@ -256,24 +256,6 @@ export function creatureWithRigs() {
         // opacity: 0.5
     });
     const skinMesh = new THREE.SkinnedMesh(bodyGeo, bodyMat);
-
-    const leftLegGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
-    const rightLegGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
-    const limbMat = new THREE.MeshBasicMaterial({
-        color: 0x44403c,
-        // skinning: true
-    });
-
-    const leftLegMesh = new THREE.Mesh(leftLegGeo, limbMat);
-    const rightLegMesh = new THREE.Mesh(rightLegGeo, limbMat);
-
-    const leftHandGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
-    const rightHandGeo = new THREE.CylinderGeometry(0.5, 0.5, 10);
-
-    const leftHandMesh = new THREE.Mesh(leftHandGeo, limbMat);
-    const rightHandMesh = new THREE.Mesh(rightHandGeo, limbMat);
-    leftHandMesh.rotateZ(Math.PI/2);
-    rightHandMesh.rotateZ(Math.PI/2);
 
     //Create the skin indices and skin weights
     for (let i = 0; i < bodyGeo.vertices.length; i++) {
@@ -287,7 +269,6 @@ export function creatureWithRigs() {
 
     let bones = [];
     const root = new THREE.Bone();
-    const head = new THREE.Bone();
     const spine1 = new THREE.Bone();
     const spine2 = new THREE.Bone();
     const spine3 = new THREE.Bone();
@@ -295,8 +276,7 @@ export function creatureWithRigs() {
     const spine5 = new THREE.Bone();
 
     // hierarchy
-    root.add(head);
-    head.add(spine1);
+    root.add(spine1);
     spine1.add(spine2);
     spine2.add(spine3);
     spine3.add(spine4);
@@ -304,7 +284,6 @@ export function creatureWithRigs() {
 
     // push bones
     bones.push(root);
-    bones.push(head);
     bones.push(spine1);
     bones.push(spine2);
     bones.push(spine3);
@@ -312,12 +291,11 @@ export function creatureWithRigs() {
     bones.push(spine5);
 
     root.position.y = -10;
-    head.position.y = 0;
-    spine1.position.y = 5;
+    spine1.position.y = 7;
     spine2.position.y = 5;
     spine3.position.y = 5;
     spine4.position.y = 5;
-    spine5.position.y = 5;
+    spine5.position.y = 3;
 
     // if not using skinned mesh just bone.add(mesh)
     spine5.add(faceMesh);

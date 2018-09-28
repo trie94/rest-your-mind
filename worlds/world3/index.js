@@ -31,38 +31,15 @@ class World3 extends React.Component {
         this.pointVertex = [];
 
         // variables for the base
-        this.radius = 500;
+        this.radius = 300;
         this.base = greenGenerator.ground(this.radius, this.radius + 10);
         this.subBase = greenGenerator.ground(50, 75);
         this.besidesPond = greenGenerator.ground(25, 40);
         this.besidesPond2 = greenGenerator.ground(5, 10);
         this.besidesPond3 = greenGenerator.ground(3, 5);
 
-        this.face = creatureGenerator.face();
-        this.spine = creatureGenerator.spine();
-        this.leftArm = creatureGenerator.limb();
-        this.rightArm = creatureGenerator.limb();
-        this.leftLeg = creatureGenerator.limb();
-        this.rightLeg = creatureGenerator.limb();
-        this.creature = creatureGenerator.creature();
-        this.creature2 = creatureGenerator.creatureWithLimbs();
-        this.creature3 = creatureGenerator.creatureWithRigs();
-        this.creature4 = creatureGenerator.creatureWithRigs2();
-        this.helper = creatureGenerator.skeletonHelper(this.creature3);
-        this.helper2 = creatureGenerator.skeletonHelper(this.creature4);
-        this.helper3 = creatureGenerator.skeletonHelper(this.leftArm);
-        this.helper4 = creatureGenerator.skeletonHelper(this.rightArm);
-        this.helper5 = creatureGenerator.skeletonHelper(this.leftLeg);
-        this.helper6 = creatureGenerator.skeletonHelper(this.rightLeg);
-        this.helper7 = creatureGenerator.skeletonHelper(this.spine);
-
-        this.creatureWithSkeleton = new THREE.Object3D();
-        this.creatureWithSkeleton.add(this.face);
-        this.creatureWithSkeleton.add(this.spine);
-        this.creatureWithSkeleton.add(this.leftArm);
-        this.creatureWithSkeleton.add(this.rightArm);
-        this.creatureWithSkeleton.add(this.leftLeg);
-        this.creatureWithSkeleton.add(this.rightLeg);
+        this.creature = creatureGenerator.creatureWithRigs();
+        this.helper = creatureGenerator.skeletonHelper(this.creature);
 
         this.mainTree = greenGenerator.tree(50, 2, 60, 0, 3, 7, 50, 5);
         this.subTree1 = greenGenerator.tree(30, 2, 30, Math.PI / 2, 5, 7, 30, 7);
@@ -223,11 +200,9 @@ class World3 extends React.Component {
         this.scene.add(this.pond);
         this.scene.add(this.waves);
         this.scene.add(this.creature);
-        this.scene.add(this.creature2);
-        this.scene.add(this.creature3);
-        this.scene.add(this.creature4);
         this.scene.add(this.sky);
         this.scene.add(this.house);
+        // this.scene.add(this.helper);
 
         this.besidesPond.position.set(50, 7, 20);
         this.besidesPond2.position.set(30, 7, 5);
@@ -235,16 +210,11 @@ class World3 extends React.Component {
         this.mainTree.position.set(70, 30, 0);
         this.subTree1.position.set(30, 20, -70);
         this.subTree2.position.set(-200, 20, -50);
-        this.creature.position.set(20, 25, 0);
-        this.creature2.position.set(-50, 25, 0);
-        this.creature3.position.set(0, 20, 100);
-        this.creature4.position.set(30, 25, 50);
+        this.creature.position.set(0, 20, 100);
 
         this.sky.position.set(0, 350, 0);
         this.house.position.set(-100, 30, -80);
         this.house.rotation.y = Math.PI / 8;
-
-        console.log(this.creature4.children[0].children[0].children[0].children[0].children[2]);
     }
 
     windowResize() {
@@ -275,20 +245,12 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
         pondGenerator.moveWaves();
-        this.creature3.children[0].rotation.y = (Math.PI * angle) / 4;
-        this.creature3.children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        this.creature3.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        this.creature3.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        this.creature3.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        this.creature3.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        
-        this.creature4.children[0].rotation.y = (Math.PI * angle) / 4;
-        // this.creature4.children[0].children[0].children[0].rotation.y = (Math.PI * angle);
-        this.creature4.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 64;
-        this.creature4.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 16;
-        this.creature4.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 64;
-        this.creature4.children[0].children[0].children[0].children[0].children[0].children[0].children[0].rotation.x = (Math.PI * angle);
-        this.creature4.children[0].children[0].children[0].children[0].children[0].children[0].children[1].rotation.x = (-Math.PI * angle);
+        this.creature.children[0].rotation.y = (Math.PI * angle) / 4;
+        this.creature.children[0].children[0].rotation.z = (Math.PI * angle) / 16;
+        this.creature.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        this.creature.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
+        this.creature.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
+        this.creature.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
         
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
