@@ -26,7 +26,7 @@ class World3 extends React.Component {
         this.onWindowResize = this.onWindowResize.bind(this);
         this.onMouseClick = this.onMouseClick.bind(this);
         this.raycast = this.raycast.bind(this);
-        this.moveCamera = this.moveCamera.bind(this);
+        this.moveBlock = this.moveBlock.bind(this);
 
         // add object that requires animation
         this.controls;
@@ -39,7 +39,7 @@ class World3 extends React.Component {
         this.base = greenGenerator.ground(this.radius, this.radius + 10);
         this.block = blockGenerator.concern();
 
-        this.creature = creatureGenerator.creatureWithRigs();
+        this.creature = creatureGenerator.getCreature();
         this.helper = creatureGenerator.skeletonHelper(this.creature);
 
         this.mainTree = greenGenerator.tree(50, 2, 60, 0, 3, 7, 50, 5);
@@ -61,6 +61,11 @@ class World3 extends React.Component {
 
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
+        this.isRaycasted = false;
+
+        this.direction;
+        this.speed = 1;
+        this.camSpeed = 0.001;
     }
 
     componentDidMount() {
@@ -98,12 +103,12 @@ class World3 extends React.Component {
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 300, 1000);
+        this.camera.position.set(0, 500, 1000);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        // this.controls.target = new THREE.Vector3(0, 15, 0);
-        // this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.target = new THREE.Vector3(0, 15, 0);
+        this.controls.maxPolarAngle = Math.PI / 2;
 
         // create stuff
         this.createGrid();
@@ -204,7 +209,7 @@ class World3 extends React.Component {
         this.mainTree.position.set(70, 30, 0);
         this.subTree1.position.set(30, 20, -70);
         this.subTree2.position.set(-200, 20, -50);
-        this.creature.position.set(0, 20, 100);
+        this.creature.position.set(100, 20, 100);
         this.block.position.set(0, 30, 0);
 
         this.sky.position.set(0, 350, 0);
@@ -229,6 +234,8 @@ class World3 extends React.Component {
     }
 
     raycast() {
+        if(!this.isRaycasted) this.isRaycasted = true;
+
         this.raycaster.setFromCamera(this.mouse, this.camera);
         // just capture the ground
         let intersects = this.raycaster.intersectObject(this.base, true);
@@ -236,20 +243,22 @@ class World3 extends React.Component {
             // get position of the block
             this.newPos = intersects[0].point;
         }
+        this.direction = this.newPos.distanceTo(this.block.position);
+        this.speed = (1/this.direction) * 0.5;
         this.camera.updateMatrixWorld();
-        this.renderScene();
     }
 
-    moveCamera() {
-        let speed = 0.01;
-        let camSpeed = 0.005;
-        let cameraPos = new THREE.Vector3(this.newPos.x, this.newPos.y + 300, this.newPos.z + 1000);
+    moveBlock() {
+        const time = Date.now() * 0.004;
+        const angle = Math.sin(time) / 8;
 
-        this.block.position.lerp(this.newPos, speed);
-        this.camera.position.lerp(cameraPos, camSpeed);
+        if (this.isRaycasted) this.block.position.lerp(this.newPos, this.speed);
+        this.block.position.y = 30;
+        let cameraPos = new THREE.Vector3(this.newPos.x, this.newPos.y + 500, this.newPos.z + 1000);
+        // this.camera.position.lerp(cameraPos, this.camSpeed);
         // this.camera.lookAt(this.block.position);
         this.renderScene();
-        this.camFrameId = window.requestAnimationFrame(this.moveCamera);
+        this.camFrameId = window.requestAnimationFrame(this.moveBlock);
     }
 
     start() {
@@ -257,7 +266,7 @@ class World3 extends React.Component {
             this.frameId = requestAnimationFrame(this.animate);
         }
         if (!this.camFrameId) {
-            this.camFrameId = requestAnimationFrame(this.moveCamera);
+            this.camFrameId = requestAnimationFrame(this.moveBlock);
         }
     }
 
@@ -275,6 +284,8 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
 
+        creatureGenerator.animate(angle);
+        creatureGenerator.assignPosRelToBlock(this.block.position, this.newPos, 40);
         pondGenerator.moveWaves();
         this.creature.children[0].rotation.y = (Math.PI * angle) / 4;
         this.creature.children[0].children[0].rotation.z = (Math.PI * angle) / 16;

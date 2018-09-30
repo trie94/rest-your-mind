@@ -63,7 +63,14 @@ module.exports = {
                 options: {
                     name: '[path][name].[ext]'
                 }
-            }
+            },
+        },
+        {
+            test: /\.(glsl|frag|vert)$/,
+            use: [
+                'glslify-loader',
+                'raw-loader'
+            ]
         }]
     },
     plugins: [
