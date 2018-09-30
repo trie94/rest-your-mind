@@ -106,9 +106,9 @@ class World3 extends React.Component {
         this.camera.position.set(0, 500, 1000);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.target = new THREE.Vector3(0, 15, 0);
-        this.controls.maxPolarAngle = Math.PI / 2;
+        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        // this.controls.target = new THREE.Vector3(0, 15, 0);
+        // this.controls.maxPolarAngle = Math.PI / 2;
 
         // create stuff
         this.createGrid();
@@ -253,17 +253,11 @@ class World3 extends React.Component {
         this.block.position.y = 30;
         let cameraPos = new THREE.Vector3(this.newPos.x, this.newPos.y + 500, this.newPos.z + 1000);
         this.camera.position.lerp(cameraPos, this.camSpeed);
-        // this.camera.lookAt(this.block.position);
-        this.renderScene();
-        this.camFrameId = window.requestAnimationFrame(this.moveBlock);
     }
 
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
-        }
-        if (!this.camFrameId) {
-            this.camFrameId = requestAnimationFrame(this.moveBlock);
         }
     }
 
@@ -284,13 +278,8 @@ class World3 extends React.Component {
         creatureGenerator.animate(angle);
         creatureGenerator.assignPosRelToBlock(this.block.position, this.newPos, 40);
         pondGenerator.moveWaves();
-        this.creature.children[0].rotation.y = (Math.PI * angle) / 4;
-        this.creature.children[0].children[0].rotation.z = (Math.PI * angle) / 16;
-        this.creature.children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
-        this.creature.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
-        this.creature.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        this.creature.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-
+        this.moveBlock();
+        
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }
