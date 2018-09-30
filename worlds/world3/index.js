@@ -22,7 +22,9 @@ class World3 extends React.Component {
         this.stop = this.stop.bind(this);
         this.animate = this.animate.bind(this);
         this.renderScene = this.renderScene.bind(this);
-        this.windowResize = this.windowResize.bind(this);
+        this.onWindowResize = this.onWindowResize.bind(this);
+        this.onMouseClick = this.onMouseClick.bind(this);
+        this.raycast = this.raycast.bind(this);
 
         // add object that requires animation
         this.controls;
@@ -54,6 +56,11 @@ class World3 extends React.Component {
         this.dat = new dat.GUI();
         this.config = new this.Config();
         this.colorControl = this.dat.addColor(this.config, 'color');
+
+        // mouse
+        this.position = new THREE.Vector3();
+        this.mouse = new THREE.Vector2(), this.INTERSECTED;
+        this.raycaster = new THREE.Raycaster();
     }
 
     componentDidMount() {
@@ -217,12 +224,37 @@ class World3 extends React.Component {
         this.house.rotation.y = Math.PI / 8;
     }
 
-    windowResize() {
+    onWindowResize() {
         this.HEIGHT = window.innerHeight;
         this.WIDTH = window.innerWidth;
         this.renderer.setSize(this.WIDTH, this.HEIGHT);
         this.camera.aspect = this.WIDTH / this.HEIGHT;
         this.camera.updateProjectionMatrix();
+    }
+
+    onMouseClick(event) {
+        event.preventDefault();
+        // get position
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        this.raycast();
+    }
+
+    raycast() {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        // just capture the ground
+        let intersects = this.raycaster.intersectObject(this.base, true);
+        if(intersects.length > 0) {
+
+            // temp
+            this.creature.position.x = intersects[0].point.x;
+            this.creature.position.z = intersects[0].point.z;
+
+            // get position of the block
+            this.position = intersects[0].point;
+        }
+        this.camera.updateMatrixWorld();
+        this.renderScene();
     }
 
     start() {
@@ -244,6 +276,7 @@ class World3 extends React.Component {
             this.config.color = color;
             this.scene.fog.color.set(color);
         });
+
         pondGenerator.moveWaves();
         this.creature.children[0].rotation.y = (Math.PI * angle) / 4;
         this.creature.children[0].children[0].rotation.z = (Math.PI * angle) / 16;
@@ -251,7 +284,7 @@ class World3 extends React.Component {
         this.creature.children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 4;
         this.creature.children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
         this.creature.children[0].children[0].children[0].children[0].children[0].children[0].rotation.z = (Math.PI * angle) / 8;
-        
+
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate);
     }
@@ -261,7 +294,9 @@ class World3 extends React.Component {
     }
 
     render() {
-        window.addEventListener('resize', this.windowResize, false);
+        window.addEventListener('resize', this.onWindowResize, false);
+        window.addEventListener('click', this.onMouseClick, false);
+
         return (
             <div id="world">
                 <p><Link to="/">back to the landing page</Link></p>
