@@ -249,13 +249,10 @@ class World3 extends React.Component {
     }
 
     moveBlock() {
-        const time = Date.now() * 0.004;
-        const angle = Math.sin(time) / 8;
-
         if (this.isRaycasted) this.block.position.lerp(this.newPos, this.speed);
         this.block.position.y = 30;
         let cameraPos = new THREE.Vector3(this.newPos.x, this.newPos.y + 500, this.newPos.z + 1000);
-        // this.camera.position.lerp(cameraPos, this.camSpeed);
+        this.camera.position.lerp(cameraPos, this.camSpeed);
         // this.camera.lookAt(this.block.position);
         this.renderScene();
         this.camFrameId = window.requestAnimationFrame(this.moveBlock);
