@@ -6,6 +6,7 @@ import * as pondGenerator from './pondGenerator';
 import * as greenGenerator from './greenGenerator';
 import * as creatureGenerator from './creaturesGenerator';
 import * as elementsGenerator from './elementsGenerator';
+import * as blockGenerator from './blockGenerator';
 import * as dat from 'dat.gui';
 
 class World3 extends React.Component {
@@ -25,6 +26,7 @@ class World3 extends React.Component {
         this.onWindowResize = this.onWindowResize.bind(this);
         this.onMouseClick = this.onMouseClick.bind(this);
         this.raycast = this.raycast.bind(this);
+        this.moveCamera = this.moveCamera.bind(this);
 
         // add object that requires animation
         this.controls;
@@ -35,10 +37,7 @@ class World3 extends React.Component {
         // variables for the base
         this.radius = 300;
         this.base = greenGenerator.ground(this.radius, this.radius + 10);
-        this.subBase = greenGenerator.ground(50, 75);
-        this.besidesPond = greenGenerator.ground(25, 40);
-        this.besidesPond2 = greenGenerator.ground(5, 10);
-        this.besidesPond3 = greenGenerator.ground(3, 5);
+        this.block = blockGenerator.concern();
 
         this.creature = creatureGenerator.creatureWithRigs();
         this.helper = creatureGenerator.skeletonHelper(this.creature);
@@ -48,7 +47,6 @@ class World3 extends React.Component {
         this.subTree2 = greenGenerator.tree(40, 2, 55, Math.PI / 3, 4, 9, 40, 6);
         this.pond = pondGenerator.pondBaseObject;
         this.waves = pondGenerator.getWaves();
-        this.stones = pondGenerator.stones;
         this.sky = elementsGenerator.sky();
         this.house = elementsGenerator.house();
 
@@ -58,8 +56,10 @@ class World3 extends React.Component {
         this.colorControl = this.dat.addColor(this.config, 'color');
 
         // mouse
-        this.position = new THREE.Vector3();
-        this.mouse = new THREE.Vector2(), this.INTERSECTED;
+        this.curPos = new THREE.Vector3();
+        this.newPos = new THREE.Vector3();
+
+        this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
     }
 
@@ -98,12 +98,12 @@ class World3 extends React.Component {
         this.container = document.getElementById('world');
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 100, 450);
+        this.camera.position.set(0, 300, 1000);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.target = new THREE.Vector3(0, 15, 0);
-        this.controls.maxPolarAngle = Math.PI / 2;
+        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        // this.controls.target = new THREE.Vector3(0, 15, 0);
+        // this.controls.maxPolarAngle = Math.PI / 2;
 
         // create stuff
         this.createGrid();
@@ -185,22 +185,11 @@ class World3 extends React.Component {
         let lights = [];
         lights[0] = new THREE.DirectionalLight(0xfff5d6, 1);
         lights[0].position.set(0, 1, 0);
-        lights[1] = new THREE.DirectionalLight(0x598aff, 1);
-        lights[1].position.set(-0.75, -1, 0.5);
-        lights[2] = new THREE.DirectionalLight(0xc9007b, 0.5);
-        lights[2].position.set(0.75, -1, 0.5);
-
         this.scene.add(lights[0]);
-        this.scene.add(lights[1]);
-        this.scene.add(lights[2]);
     }
 
     addElementsToScene() {
-
         this.scene.add(this.base);
-        this.scene.add(this.besidesPond);
-        this.scene.add(this.besidesPond2);
-        this.scene.add(this.besidesPond3);
         this.scene.add(this.mainTree);
         this.scene.add(this.subTree1);
         this.scene.add(this.subTree2);
@@ -209,15 +198,14 @@ class World3 extends React.Component {
         this.scene.add(this.creature);
         this.scene.add(this.sky);
         this.scene.add(this.house);
+        this.scene.add(this.block);
         // this.scene.add(this.helper);
 
-        this.besidesPond.position.set(50, 7, 20);
-        this.besidesPond2.position.set(30, 7, 5);
-        this.besidesPond3.position.set(20, 4, 5);
         this.mainTree.position.set(70, 30, 0);
         this.subTree1.position.set(30, 20, -70);
         this.subTree2.position.set(-200, 20, -50);
         this.creature.position.set(0, 20, 100);
+        this.block.position.set(0, 30, 0);
 
         this.sky.position.set(0, 350, 0);
         this.house.position.set(-100, 30, -80);
@@ -244,22 +232,32 @@ class World3 extends React.Component {
         this.raycaster.setFromCamera(this.mouse, this.camera);
         // just capture the ground
         let intersects = this.raycaster.intersectObject(this.base, true);
-        if(intersects.length > 0) {
-
-            // temp
-            this.creature.position.x = intersects[0].point.x;
-            this.creature.position.z = intersects[0].point.z;
-
+        if (intersects.length > 0) {
             // get position of the block
-            this.position = intersects[0].point;
+            this.newPos = intersects[0].point;
         }
         this.camera.updateMatrixWorld();
         this.renderScene();
     }
 
+    moveCamera() {
+        let speed = 0.01;
+        let camSpeed = 0.005;
+        let cameraPos = new THREE.Vector3(this.newPos.x, this.newPos.y + 300, this.newPos.z + 1000);
+
+        this.block.position.lerp(this.newPos, speed);
+        this.camera.position.lerp(cameraPos, camSpeed);
+        // this.camera.lookAt(this.block.position);
+        this.renderScene();
+        this.camFrameId = window.requestAnimationFrame(this.moveCamera);
+    }
+
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
+        }
+        if (!this.camFrameId) {
+            this.camFrameId = requestAnimationFrame(this.moveCamera);
         }
     }
 
@@ -271,7 +269,7 @@ class World3 extends React.Component {
         const time = Date.now() * 0.004;
         const angle = Math.sin(time) / 8;
 
-        this.controls.update();
+        // this.controls.update();
         this.colorControl.onChange((color) => {
             this.config.color = color;
             this.scene.fog.color.set(color);
