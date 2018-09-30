@@ -8,6 +8,8 @@ import * as creatureGenerator from './creaturesGenerator';
 import * as elementsGenerator from './elementsGenerator';
 import * as blockGenerator from './blockGenerator';
 import * as dat from 'dat.gui';
+import munyuSound from '../../assets/sounds/munyu_basic.wav';
+// import munyuSound from '../../assets/sounds/amazingu.wav';
 
 class World3 extends React.Component {
     constructor(props) {
@@ -66,6 +68,11 @@ class World3 extends React.Component {
         this.direction;
         this.speed = 1;
         this.camSpeed = 0.001;
+
+        // audio
+        this.listener = new THREE.AudioListener();
+        this.munyuSound = new THREE.Audio(this.listener);
+        this.audioLoader = new THREE.AudioLoader();
     }
 
     componentDidMount() {
@@ -96,6 +103,15 @@ class World3 extends React.Component {
             1,
             10000
         );
+
+        // audio
+        this.camera.add(this.listener);
+        this.audioLoader.load(munyuSound, (buffer)=>{
+            this.munyuSound.setBuffer(buffer);
+            this.munyuSound.setLoop(false);
+            this.munyuSound.setVolume(1);
+        });
+
         this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         this.renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
         this.renderer.setSize(this.WIDTH, this.HEIGHT);
@@ -231,6 +247,9 @@ class World3 extends React.Component {
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.raycast();
+
+        if (this.munyuSound.isPlaying) this.munyuSound.stop();
+        this.munyuSound.play();
     }
 
     raycast() {
