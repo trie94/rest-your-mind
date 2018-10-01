@@ -147,30 +147,52 @@ let avoidPos = new THREE.Vector3();
 let direction = new THREE.Vector3();
 let clock = new THREE.Clock();
 let delta = clock.getDelta();
+let distance;
+let hasArrived = false;
 
-export function assignPosRelToBlock(blockPos, blockNewPos, blockRad) {
+let state;
+
+let statesEnum = {
+    IDLE: "IDLE",
+    MOVE: "MOVE",
+    AVOID: "AVOID"
+};
+
+export function assignPosRelToBlock(blockPos, blockNewPos, blockRad, avoidRad) {
 
     let blockDir = direction.subVectors(blockNewPos, blockPos).normalize();
+    distance = Math.floor(skinMesh.position.distanceTo(blockPos));
+
     avoidPos.x = skinMesh.position.x + blockDir.x;
     avoidPos.y = skinMesh.position.y + blockDir.y;
     avoidPos.z = skinMesh.position.z + blockDir.z;
     // console.log(blockDir);
-    if (skinMesh.position.distanceTo(blockPos) > blockRad) {
-        skinMesh.position.lerp(blockPos, speed);
 
-        // need to be changed to lerpVectors
-        
-        // if (delta < 0.9) {
-        //     skinMesh.position.lerpVectors(skinMesh.position, blockPos, delta);
-        //     delta += 0.01;
-        // }
-    } else if (skinMesh.position.distanceTo(blockPos) < 30) {
-        console.log("avoid");
-
-        // this part should be implemented
-        skinMesh.position.lerp(avoidPos, speed);
+    if (distance == blockRad) {
+        // once arrived
+        hasArrived = true;
+        state = statesEnum.IDLE;
     }
-    faceObj.rotation.x = blockPos.x;
+
+    // hold the char in the idle zone, avoid jittery movement
+    if (distance > blockRad + 5) {
+        hasArrived = false;
+        if (state !== statesEnum.IDLE) state = statesEnum.IDLE;
+        // skinMesh.position.x = snapPos.x;
+        // skinMesh.position.z = snapPos.z;
+    }
+
+    if (distance > blockRad) {
+        if (!hasArrived) {
+            state = statesEnum.MOVE;
+        }
+    }
+    if (distance < avoidRad) {
+        // avoid
+        state = statesEnum.AVOID;
+    }
+    
+    // console.log(state);
 }
 
 export function skeletonHelper(mesh) {
