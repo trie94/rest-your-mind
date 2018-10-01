@@ -1,212 +1,247 @@
 import * as THREE from 'three';
 
-let bones = [];
-const root = new THREE.Bone();
-const spine1 = new THREE.Bone();
-const spine2 = new THREE.Bone();
-const spine3 = new THREE.Bone();
-const spine4 = new THREE.Bone();
-const spine5 = new THREE.Bone();
+export default class Creature {
+    constructor() {
+        // this.position = position;
+        this.creatureState = this.creatureState.bind(this);
+        this.idle = this.idle.bind(this);
+        this.moveToward = this.moveToward.bind(this);
+        this.avoid = this.avoid.bind(this);
+        this.skeletonHelper = this.skeletonHelper.bind(this);
+        this.calculateSkinIndex = this.calculateSkinIndex.bind(this);
+        this.calculateSkinWeight = this.calculateSkinWeight.bind(this);
+        this.update = this.update.bind(this);
 
-const faceObj = new THREE.Object3D();
-let heightSegment = 20;
+        this.bones = [];
+        this.root = new THREE.Bone();
+        this.spine1 = new THREE.Bone();
+        this.spine2 = new THREE.Bone();
+        this.spine3 = new THREE.Bone();
+        this.spine4 = new THREE.Bone();
+        this.spine5 = new THREE.Bone();
 
-const eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
-const eyeMat = new THREE.MeshBasicMaterial({
-    color: 0x44403c,
-    side: THREE.DoubleSide,
-    flatShading: true
-});
+        this.faceObj = new THREE.Object3D();
+        this.heightSegment = 20;
 
-const leftEyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
-const rightEyeMesh = new THREE.Mesh(eyeGeo, eyeMat);
+        this.eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
+        this.eyeMat = new THREE.MeshBasicMaterial({
+            color: 0x44403c,
+            side: THREE.DoubleSide,
+            flatShading: true
+        });
 
-const mouthPointsArray = [
-    new THREE.Vector3(-1, 0, 0),
-    new THREE.Vector3(0, 0.3, 0.5),
-    new THREE.Vector3(1, 0, 0)];
+        this.leftEyeMesh = new THREE.Mesh(this.eyeGeo, this.eyeMat);
+        this.rightEyeMesh = new THREE.Mesh(this.eyeGeo, this.eyeMat);
 
-const mouthCurve = new THREE.CatmullRomCurve3(mouthPointsArray);
-const mouthGeo = new THREE.TubeGeometry(mouthCurve, 20, 0.3, 5);
-const mouthMesh = new THREE.Mesh(mouthGeo, eyeMat);
+        this.mouthPointsArray = [
+            new THREE.Vector3(-1, 0, 0),
+            new THREE.Vector3(0, 0.3, 0.5),
+            new THREE.Vector3(1, 0, 0)];
 
-leftEyeMesh.position.set(2.5, 0, 3.7);
-rightEyeMesh.position.set(-2.5, 0, 3.7);
-mouthMesh.position.set(0, 0, 5);
-mouthMesh.rotation.z = Math.PI;
+        this.mouthCurve = new THREE.CatmullRomCurve3(this.mouthPointsArray);
+        this.mouthGeo = new THREE.TubeGeometry(this.mouthCurve, 20, 0.3, 5);
+        this.mouthMesh = new THREE.Mesh(this.mouthGeo, this.eyeMat);
 
-faceObj.add(leftEyeMesh);
-faceObj.add(rightEyeMesh);
-faceObj.add(mouthMesh);
+        this.leftEyeMesh.position.set(2.5, 0, 3.7);
+        this.rightEyeMesh.position.set(-2.5, 0, 3.7);
+        this.mouthMesh.position.set(0, 0, 5);
+        this.mouthMesh.rotation.z = Math.PI;
 
-// face
-const faceGeo = new THREE.SphereGeometry(7, 10, 20);
-const faceMat = new THREE.MeshBasicMaterial({
-    color: 0xefe9e3,
-    side: THREE.DoubleSide,
-    flatShading: true,
-    // transparent: true,
-    // opacity: 0.5
-});
+        this.faceObj.add(this.leftEyeMesh);
+        this.faceObj.add(this.rightEyeMesh);
+        this.faceObj.add(this.mouthMesh);
 
-const faceMesh = new THREE.Mesh(faceGeo, faceMat);
-faceMesh.position.y = -5;
+        // face
+        this.faceGeo = new THREE.SphereGeometry(7, 10, 20);
+        this.faceMat = new THREE.MeshBasicMaterial({
+            color: 0xefe9e3,
+            side: THREE.DoubleSide,
+            flatShading: true,
+            // transparent: true,
+            // opacity: 0.5
+        });
 
-const hatGeo = new THREE.IcosahedronGeometry(1.5, 0);
-const hatMat = new THREE.MeshBasicMaterial({
-    color: 0xe58b61,
-    side: THREE.DoubleSide,
-    flatShading: true,
-    transparent: true,
-    opacity: 0.5
-});
+        this.faceMesh = new THREE.Mesh(this.faceGeo, this.faceMat);
+        this.faceMesh.position.y = -5;
 
-const hat = new THREE.Mesh(hatGeo, hatMat);
-hat.position.set(0, 8, 0);
-// faceObj.add(hat);
+        this.hatGeo = new THREE.IcosahedronGeometry(1.5, 0);
+        this.hatMat = new THREE.MeshBasicMaterial({
+            color: 0xe58b61,
+            side: THREE.DoubleSide,
+            flatShading: true,
+            transparent: true,
+            opacity: 0.5
+        });
 
-const bodyGeo = new THREE.CylinderGeometry(5, 7, 15, 20, heightSegment);
-const bodyMat = new THREE.MeshBasicMaterial({
-    color: 0xe58b61,
-    skinning: true,
-    // transparent: true,
-    // opacity: 0.5
-});
-const skinMesh = new THREE.SkinnedMesh(bodyGeo, bodyMat);
+        this.hat = new THREE.Mesh(this.hatGeo, this.hatMat);
+        this.hat.position.set(0, 8, 0);
 
-//Create the skin indices and skin weights
-for (let i = 0; i < bodyGeo.vertices.length; i++) {
+        this.bodyGeo = new THREE.CylinderGeometry(5, 7, 15, 20, this.heightSegment);
+        this.bodyMat = new THREE.MeshBasicMaterial({
+            color: 0xe58b61,
+            skinning: true,
+            // transparent: true,
+            // opacity: 0.5
+        });
+        this.creature = new THREE.SkinnedMesh(this.bodyGeo, this.bodyMat);
 
-    let skinIndex = calculateSkinIndex(30, bones.length, bodyGeo.vertices, i);
-    let skinWeight = calculateSkinWeight(30, bones.length, bodyGeo.vertices, i);
+        //Create the skin indices and skin weights
+        for (let i = 0; i < this.bodyGeo.vertices.length; i++) {
 
-    bodyGeo.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex + 1, 0, 0));
-    bodyGeo.skinWeights.push(new THREE.Vector4(1 - skinWeight, skinWeight, 0, 0));
-}
+            this.skinIndex = this.calculateSkinIndex(30, this.bones.length, this.bodyGeo.vertices, i);
+            this.skinWeight = this.calculateSkinWeight(30, this.bones.length, this.bodyGeo.vertices, i);
 
-// hierarchy
-root.add(spine1);
-spine1.add(spine2);
-spine2.add(spine3);
-spine3.add(spine4);
-spine4.add(spine5);
+            this.bodyGeo.skinIndices.push(new THREE.Vector4(this.skinIndex, this.skinIndex + 1, 0, 0));
+            this.bodyGeo.skinWeights.push(new THREE.Vector4(1 - this.skinWeight, this.skinWeight, 0, 0));
+        }
 
-// push bones
-bones.push(root);
-bones.push(spine1);
-bones.push(spine2);
-bones.push(spine3);
-bones.push(spine4);
-bones.push(spine5);
+        // hierarchy
+        this.root.add(this.spine1);
+        this.spine1.add(this.spine2);
+        this.spine2.add(this.spine3);
+        this.spine3.add(this.spine4);
+        this.spine4.add(this.spine5);
 
-root.position.y = -10;
-spine1.position.y = 7;
-spine2.position.y = 5;
-spine3.position.y = 5;
-spine4.position.y = 5;
-spine5.position.y = 3;
+        // push bones
+        this.bones.push(this.root);
+        this.bones.push(this.spine1);
+        this.bones.push(this.spine2);
+        this.bones.push(this.spine3);
+        this.bones.push(this.spine4);
+        this.bones.push(this.spine5);
 
-spine5.add(faceMesh);
-spine5.add(leftEyeMesh);
-spine5.add(rightEyeMesh);
-spine5.add(hat);
-spine5.add(mouthMesh);
+        this.root.position.y = -10;
+        this.spine1.position.y = 7;
+        this.spine2.position.y = 5;
+        this.spine3.position.y = 5;
+        this.spine4.position.y = 5;
+        this.spine5.position.y = 3;
 
-const skeleton = new THREE.Skeleton(bones);
-skinMesh.add(root);
-skinMesh.position.y = -10;
+        this.spine5.add(this.faceMesh);
+        this.spine5.add(this.leftEyeMesh);
+        this.spine5.add(this.rightEyeMesh);
+        this.spine5.add(this.hat);
+        this.spine5.add(this.mouthMesh);
 
-// position before bind
-skinMesh.add(root);
-skinMesh.bind(skeleton);
+        this.skeleton = new THREE.Skeleton(this.bones);
+        this.creature.add(this.root);
+        this.creature.position.y = -10;
 
-// #region animation
-const speed = 0.005;
-const avoidSpeed = 0.01;
+        // position before bind
+        this.creature.add(this.root);
+        this.creature.bind(this.skeleton);
 
-export function getCreature() {
-    return skinMesh;
-}
+        // #region animation
+        this.speed = 0.005;
+        this.avoidSpeed = 0.01;
 
-export function animate(angle) {
-    bones[0].rotation.y = (Math.PI * angle) / 4;
-    bones[1].rotation.z = (Math.PI * angle) / 4;
-    bones[2].rotation.z = (Math.PI * angle) / 2;
-    bones[3].rotation.z = (Math.PI * angle) / 4;
-    bones[4].rotation.z = (Math.PI * angle) / 8;
-    bones[5].rotation.z = (Math.PI * angle) / 8;
+        this.avoidPos = new THREE.Vector3();
+        this.direction = new THREE.Vector3();
 
-    let hatPos = new THREE.Vector3(faceMesh.position.x, faceMesh.position.y + 15, faceMesh.position.z);
-    hat.position.lerp(hatPos, speed);
-    hat.rotation.x = (Math.PI * angle) * 4;
-    hat.rotation.y = (Math.PI * angle) * 4;
-    hat.rotation.z = (Math.PI * angle) * 4;
-}
+        this.distance;
+        this.hasArrived = false;
 
-let avoidPos = new THREE.Vector3();
-let direction = new THREE.Vector3();
-let clock = new THREE.Clock();
-let delta = clock.getDelta();
-let distance;
-let hasArrived = false;
+        this.state;
+        this.statesEnum = {
+            IDLE: "IDLE",
+            MOVE: "MOVE",
+            AVOID: "AVOID",
+            WATCH: "WATCH",
+            PRAY: "PRAY"
+        };
 
-let state;
-
-let statesEnum = {
-    IDLE: "IDLE",
-    MOVE: "MOVE",
-    AVOID: "AVOID"
-};
-
-export function assignPosRelToBlock(blockPos, blockNewPos, blockRad, avoidRad) {
-
-    let blockDir = direction.subVectors(blockNewPos, blockPos).normalize();
-    distance = Math.floor(skinMesh.position.distanceTo(blockPos));
-
-    avoidPos.x = skinMesh.position.x + blockDir.x;
-    avoidPos.y = skinMesh.position.y + blockDir.y;
-    avoidPos.z = skinMesh.position.z + blockDir.z;
-    // console.log(blockDir);
-
-    if (distance == blockRad) {
-        // once arrived
-        hasArrived = true;
-        state = statesEnum.IDLE;
+        return this.creature;
     }
 
-    // hold the char in the idle zone, avoid jittery movement
-    if (distance > blockRad + 5) {
-        hasArrived = false;
-        if (state !== statesEnum.IDLE) state = statesEnum.IDLE;
-        // skinMesh.position.x = snapPos.x;
-        // skinMesh.position.z = snapPos.z;
-    }
+    creatureState(angle, blockPos, blockNewPos, blockRad, avoidRad) {
 
-    if (distance > blockRad) {
-        if (!hasArrived) {
-            state = statesEnum.MOVE;
+        let blockDir = direction.subVectors(blockNewPos, blockPos).normalize();
+        distance = Math.floor(creature.position.distanceTo(blockPos));
+
+        // avoidPos.x = creature.position.x + blockDir.x;
+        // avoidPos.y = creature.position.y + blockDir.y;
+        // avoidPos.z = creature.position.z + blockDir.z;
+        // console.log(blockDir);
+
+        if (distance == blockRad) {
+            hasArrived = true;
+            if (state !== statesEnum.WATCH) state = statesEnum.WATCH;
+        }
+
+        // hold the char in the idle zone, avoid jittery movement
+        if (distance >= blockRad + 5) {
+            hasArrived = false;
+            if (state !== statesEnum.WATCH) state = statesEnum.WATCH;
+            // skinMesh.position.x = snapPos.x;
+            // skinMesh.position.z = snapPos.z;
+        }
+
+        if (distance > blockRad) {
+            if (!hasArrived) {
+                state = statesEnum.MOVE;
+            }
+        }
+        if (distance < avoidRad) {
+            // avoid
+            state = statesEnum.AVOID;
+        }
+
+        // determine behavior
+        switch (state) {
+            case statesEnum.IDLE:
+                idle(angle);
+                break;
+            case statesEnum.MOVE:
+                moveToward(blockPos);
+                break;
+            case statesEnum.AVOID:
+                avoid();
+                break;
         }
     }
-    if (distance < avoidRad) {
-        // avoid
-        state = statesEnum.AVOID;
+
+    idle(angle) {
+        this.bones[0].rotation.y = (Math.PI * angle) / 4;
+        this.bones[1].rotation.z = (Math.PI * angle) / 4;
+        this.bones[2].rotation.z = (Math.PI * angle) / 2;
+        this.bones[3].rotation.z = (Math.PI * angle) / 4;
+        this.bones[4].rotation.z = (Math.PI * angle) / 8;
+        this.bones[5].rotation.z = (Math.PI * angle) / 8;
+
+        let hatPos = new THREE.Vector3(faceMesh.position.x, faceMesh.position.y + 15, faceMesh.position.z);
+        this.hat.position.lerp(hatPos, this.speed);
+        this.hat.rotation.x = (Math.PI * angle) * 4;
+        this.hat.rotation.y = (Math.PI * angle) * 4;
+        this.hat.rotation.z = (Math.PI * angle) * 4;
     }
-    
-    // console.log(state);
-}
 
-export function skeletonHelper(mesh) {
-    const helper = new THREE.SkeletonHelper(mesh);
-    helper.material.linewidth = 3;
+    moveToward(blockPos) {
+        this.creature.position.lerp(blockPos, this.speed);
+    }
 
-    return helper;
-}
+    avoid(avoidPos) {
+        this.creature.position.lerp(avoidPos, this.speed);
+    }
 
-function calculateSkinIndex(height, boneNum, vertice, number) {
-    return Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
-}
+    skeletonHelper(mesh) {
+        const helper = new THREE.SkeletonHelper(mesh);
+        helper.material.linewidth = 3;
 
-function calculateSkinWeight(height, boneNum, vertice, number) {
-    return ((vertice[number].y + (height / 2)) / height * (boneNum - 1))
-        - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+        return helper;
+    }
+
+    calculateSkinIndex(height, boneNum, vertice, number) {
+        return Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    }
+
+    calculateSkinWeight(height, boneNum, vertice, number) {
+        return ((vertice[number].y + (height / 2)) / height * (boneNum - 1))
+            - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    }
+
+    update(){
+        const time = Date.now() * 0.004;
+        const angle = Math.sin(time) / 8;
+        this.frameId = window.requestAnimationFrame(this.update);
+    }
 }

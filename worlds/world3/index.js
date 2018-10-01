@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 const OrbitControls = require('three-orbit-controls')(THREE);
 import * as pondGenerator from './pondGenerator';
 import * as greenGenerator from './greenGenerator';
-import * as creatureGenerator from './creaturesGenerator';
 import * as elementsGenerator from './elementsGenerator';
 import * as blockGenerator from './blockGenerator';
 import * as dat from 'dat.gui';
 import munyuSound from '../../assets/sounds/munyu_basic.wav';
 // import munyuSound from '../../assets/sounds/amazingu.wav';
+import Creature from './creaturesGenerator';
 
 class World3 extends React.Component {
     constructor(props) {
@@ -23,7 +23,7 @@ class World3 extends React.Component {
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
-        this.animate = this.animate.bind(this);
+        this.update = this.update.bind(this);
         this.renderScene = this.renderScene.bind(this);
         this.onWindowResize = this.onWindowResize.bind(this);
         this.onMouseClick = this.onMouseClick.bind(this);
@@ -41,8 +41,8 @@ class World3 extends React.Component {
         this.base = greenGenerator.ground(this.radius, this.radius + 10);
         this.block = blockGenerator.concern();
 
-        this.creature = creatureGenerator.getCreature();
-        this.helper = creatureGenerator.skeletonHelper(this.creature);
+        this.creature = new Creature();
+        // this.helper = creatureGenerator.skeletonHelper(this.creature);
 
         this.mainTree = greenGenerator.tree(50, 2, 60, 0, 3, 7, 50, 5);
         this.subTree1 = greenGenerator.tree(30, 2, 30, Math.PI / 2, 5, 7, 30, 7);
@@ -274,8 +274,8 @@ class World3 extends React.Component {
                 this.snapPos.copy(this.block.position);
             }
             if (Math.floor(this.block.position.distanceTo(this.newPos)) < 30){
-                this.block.position.x = this.snapPos.x;
-                this.block.position.z = this.snapPos.z;
+                this.newPos.x = this.snapPos.x;
+                this.newPos.z = this.snapPos.z;
             } else {
                 this.block.position.lerp(this.newPos, this.speed);
             }
@@ -288,7 +288,7 @@ class World3 extends React.Component {
 
     start() {
         if (!this.frameId) {
-            this.frameId = requestAnimationFrame(this.animate);
+            this.frameId = requestAnimationFrame(this.update);
         }
     }
 
@@ -296,7 +296,8 @@ class World3 extends React.Component {
         cancelAnimationFrame(this.frameId);
     }
 
-    animate() {
+    // every frame
+    update() {
         const time = Date.now() * 0.004;
         const angle = Math.sin(time) / 8;
 
@@ -306,13 +307,11 @@ class World3 extends React.Component {
             this.scene.fog.color.set(color);
         });
 
-        creatureGenerator.animate(angle);
-        creatureGenerator.assignPosRelToBlock(this.block.position, this.newPos, 40, 30);
+        // this.creature.creatureState(angle, this.block.position, this.newPos, 40, 30);
         pondGenerator.moveWaves();
         this.moveBlock();
-
         this.renderScene();
-        this.frameId = window.requestAnimationFrame(this.animate);
+        this.frameId = window.requestAnimationFrame(this.update);
     }
 
     renderScene() {
