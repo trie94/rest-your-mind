@@ -1,4 +1,4 @@
-// import './style.scss';
+import './../style.scss';
 import SceneManager from './SceneManager';
 
 if (process.env.NODE_ENV !== 'production') { console.log("dev mode"); }
@@ -18,12 +18,14 @@ if (module.hot) {
 
 const canvas = document.createElement('canvas');
 canvas.id = 'canvas';
-document.body.appendChild(canvas);
+const root = document.getElementById('root');
+root.appendChild(canvas);
 
 const sceneManager = new SceneManager(canvas);
 
 bindEventListeners();
-render();
+start();
+update();
 
 function bindEventListeners() {
 	window.onresize = resizeCanvas;
@@ -31,16 +33,16 @@ function bindEventListeners() {
 }
 
 function resizeCanvas() {
-	canvas.style.width = '100%';
-	canvas.style.height= '100%';
-	
-	canvas.width  = canvas.offsetWidth;
-	canvas.height = canvas.offsetHeight;
-    
+	canvas.style.width = window.innerWidth;
+	canvas.style.height= window.innerHeight;
     sceneManager.onWindowResize();
 }
 
-function render() {
-    requestAnimationFrame(render);
-    // sceneManager.update();
+function start() {
+    sceneManager.start();
+}
+
+function update() {
+    requestAnimationFrame(update);
+    sceneManager.update();
 }

@@ -1,75 +1,86 @@
 import * as THREE from 'three';
+import Block from './Block';
+const OrbitControls = require('three-orbit-controls')(THREE);
 
 export default function SceneManager(canvas) {
 
     const clock = new THREE.Clock();
-    
-    const screenDimensions = {
-        width: canvas.width,
-        height: canvas.height
-    }
-    
-    const scene = buildScene();
-    const renderer = buildRender(screenDimensions);
-    const camera = buildCamera(screenDimensions);
-    // const sceneSubjects = createSceneSubjects(scene);
+    let HEIGHT = window.innerHeight;
+    let WIDTH = window.innerWidth;
 
-    function buildScene() {
+    const scene = createScene();
+    const renderer = createRender();
+    const camera = createCamera();
+    const controls = createControl();
+    // add const static base environment
+    const block = new Block();
+
+    function createScene() {
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color("#000");
+        scene.background = new THREE.Color("#d6eac5");
 
         return scene;
     }
 
-    function buildRender({ width, height }) {
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); 
-        const DPR = (window.devicePixelRatio) ? window.devicePixelRatio : 1;
-        renderer.setPixelRatio(DPR);
-        renderer.setSize(width, height);
-
+    function createRender() {
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
+        renderer.setSize(WIDTH, HEIGHT);
         renderer.gammaInput = true;
-        renderer.gammaOutput = true; 
+        renderer.gammaOutput = true;
 
         return renderer;
     }
 
-    function buildCamera({ width, height }) {
-        const aspectRatio = width / height;
+    function createCamera() {
+        const aspectRatio = WIDTH / HEIGHT;
         const fieldOfView = 60;
         const nearPlane = 1;
-        const farPlane = 100; 
+        const farPlane = 10000;
         const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
 
+        camera.position.set(0, 200, 500);
+        camera.lookAt(new THREE.Vector3());
+        
         return camera;
     }
 
-    // function createSceneSubjects(scene) {
-    //     const sceneSubjects = [
-    //         new GeneralLights(scene),
-    //         new SceneSubject(scene)
-    //     ];
+    function createControl() {
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target = new THREE.Vector3(0, 15, 0);
+        controls.maxPolarAngle = Math.PI / 2;
 
-    //     return sceneSubjects;
-    // }
+        return controls;
+    }
 
-    // this.update = function() {
-    //     const elapsedTime = clock.getElapsedTime();
+    function getBlock() {
+        scene.add(block.getBlock());
+    }
 
-    //     for(let i=0; i<sceneSubjects.length; i++)
-    //     	sceneSubjects[i].update(elapsedTime);
+    this.start = function () {
+        console.log("start");
+        getBlock();
+    }
 
-    //     renderer.render(scene, camera);
-    // }
+    this.update = function () {
+        const elapsedTime = clock.getElapsedTime();
 
-    this.onWindowResize = function() {
-        const { width, height } = canvas;
+        // for(let i=0; i<sceneSubjects.length; i++)
+        // 	sceneSubjects[i].update(elapsedTime);
 
-        screenDimensions.width = width;
-        screenDimensions.height = height;
+        renderer.render(scene, camera);
+    }
 
-        camera.aspect = width / height;
+    this.onWindowResize = function () {
+        HEIGHT = window.innerHeight;
+        WIDTH = window.innerWidth;
+
+        canvas.innerWidth = WIDTH;
+        canvas.innerHeight = HEIGHT;
+
+        camera.aspect = WIDTH / HEIGHT;
         camera.updateProjectionMatrix();
-        
-        renderer.setSize(width, height);
+
+        renderer.setSize(WIDTH, HEIGHT);
     }
 }

@@ -26,7 +26,7 @@ const htmlPlugins = files.map(function(file) {
 })
 
 module.exports = {
-    entry: ['./index.js'],
+    entry: ['./js/index.js'],
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, './dist'),
