@@ -14,6 +14,7 @@ export default function SceneManager(canvas) {
     const controls = createControl();
     // add const static base environment
     const block = new Block();
+    const block1 = block.getBlock();
 
     function createScene() {
         const scene = new THREE.Scene();
@@ -41,7 +42,7 @@ export default function SceneManager(canvas) {
 
         camera.position.set(0, 200, 500);
         camera.lookAt(new THREE.Vector3());
-        
+
         return camera;
     }
 
@@ -53,13 +54,9 @@ export default function SceneManager(canvas) {
         return controls;
     }
 
-    function getBlock() {
-        scene.add(block.getBlock());
-    }
-
     this.start = function () {
-        console.log("start");
-        getBlock();
+        console.log("start", block);
+        scene.add(block1);
     }
 
     this.update = function () {
