@@ -10,7 +10,7 @@ export default function SceneManager(canvas) {
     let WIDTH = window.innerWidth;
 
     const scene = createScene();
-    const renderer = createRender();
+    const renderer = createRenderer();
     const camera = createCamera();
     const controls = createControl();
 
@@ -28,7 +28,7 @@ export default function SceneManager(canvas) {
         return scene;
     }
 
-    function createRender() {
+    function createRenderer() {
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
         renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
         renderer.setSize(WIDTH, HEIGHT);
