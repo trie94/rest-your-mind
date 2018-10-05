@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Block from './Block';
 import Munyu from './Munyu';
+import bgm from '../assets/sounds/bgm.wav';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 export default function SceneManager(canvas) {
@@ -17,6 +18,8 @@ export default function SceneManager(canvas) {
 
     // audio
     const listener = new THREE.AudioListener();
+    const audioLoader = new THREE.AudioLoader();
+    const bgmAudio = new THREE.Audio(listener);
 
     // add const static base environment
     const block = new Block().getBlock(-20, 0, 0);
@@ -76,8 +79,18 @@ export default function SceneManager(canvas) {
         return lights;
     }
 
+    function loadSound() {
+        audioLoader.load(bgm, (buffer) => {
+            bgmAudio.setBuffer(buffer);
+            bgmAudio.setLoop(true),
+            bgmAudio.setVolume(0.3);
+            bgmAudio.play();
+        });
+    }
+
     this.start = function () {
         console.log("start");
+        loadSound();
         camera.add(Munyu1.getListener());
         camera.add(Munyu2.getListener());
         scene.add(light[0]);
@@ -94,7 +107,7 @@ export default function SceneManager(canvas) {
         // 	sceneSubjects[i].update(elapsedTime);
 
         Munyu1.idle(0.004);
-        Munyu2.idle(1);
+        Munyu2.idle(0.002);
         renderer.render(scene, camera);
     }
 
@@ -113,6 +126,6 @@ export default function SceneManager(canvas) {
 
     this.onMouseClick = function() {
         Munyu1.playMunyu();
-        Munyu2.playAmazingu();
+        // Munyu2.playAmazingu();
     }
 }
