@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Block from './Block';
+import Munyu from './Munyu';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 export default function SceneManager(canvas) {
@@ -12,9 +13,13 @@ export default function SceneManager(canvas) {
     const renderer = createRender();
     const camera = createCamera();
     const controls = createControl();
+
     // add const static base environment
-    const block = new Block();
-    const block1 = block.getBlock();
+    const block = new Block().getBlock(-20, 0, 0);
+
+    // munyu
+    const munyu = new Munyu().getMunyu(0, 0, 0);
+    const munyu2 = new Munyu().getMunyu(20, 0, 0);
 
     function createScene() {
         const scene = new THREE.Scene();
@@ -55,8 +60,10 @@ export default function SceneManager(canvas) {
     }
 
     this.start = function () {
-        console.log("start", block);
-        scene.add(block1);
+        console.log("start", munyu);
+        scene.add(block);
+        scene.add(munyu);
+        scene.add(munyu2);
     }
 
     this.update = function () {

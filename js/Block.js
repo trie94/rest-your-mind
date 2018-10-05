@@ -11,7 +11,8 @@ export default function Block() {
     const concernMesh = new THREE.Mesh(blockGeo, blockMat);
     blockObj.add(concernMesh);
 
-    this.getBlock = function() {
+    this.getBlock = function (x, y, z) {
+        blockObj.position.set(x, y, z);
         return blockObj;
     }
 }
