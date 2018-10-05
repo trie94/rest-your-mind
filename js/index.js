@@ -28,14 +28,19 @@ start();
 update();
 
 function bindEventListeners() {
-	window.onresize = resizeCanvas;
-	resizeCanvas();	
+    window.onresize = resizeCanvas;
+    window.onclick = mouseClick;
+    resizeCanvas();	
 }
 
 function resizeCanvas() {
 	canvas.style.width = window.innerWidth;
 	canvas.style.height= window.innerHeight;
     sceneManager.onWindowResize();
+}
+
+function mouseClick() {
+    sceneManager.onMouseClick();
 }
 
 function start() {

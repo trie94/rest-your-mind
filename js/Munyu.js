@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import munyuSound from '../assets/sounds/munyu_basic.wav';
+import amazinguSound from '../assets/sounds/amazingu.wav';
 
 export default function Munyu() {
 
@@ -120,16 +122,16 @@ export default function Munyu() {
     munyu.add(root);
     munyu.bind(skeleton);
 
-    // #region animation
-    const speed = 0.005;
-    const avoidSpeed = 0.01;
+    function calculateSkinIndex(height, boneNum, vertice, number) {
+        return Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    }
 
-    let avoidPos = new THREE.Vector3();
-    let direction = new THREE.Vector3();
+    function calculateSkinWeight(height, boneNum, vertice, number) {
+        return ((vertice[number].y + (height / 2)) / height * (boneNum - 1))
+            - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    }
 
-    let distance;
-    let hasArrived = false;
-
+    // animation
     let state;
     const statesEnum = {
         IDLE: "IDLE",
@@ -144,12 +146,59 @@ export default function Munyu() {
         return munyu;
     }
 
-    function calculateSkinIndex(height, boneNum, vertice, number) {
-        return Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    this.setMunyuState = function (state) {
+        return state;
     }
 
-    function calculateSkinWeight(height, boneNum, vertice, number) {
-        return ((vertice[number].y + (height / 2)) / height * (boneNum - 1))
-            - Math.floor((vertice[number].y + (height / 2)) / height * (boneNum - 1));
+    this.idle = function (speed) {
+        const time = Date.now() * speed;
+        const angle = Math.sin(time) / 8;
+
+        bones[0].rotation.y = (Math.PI * angle) / 4;
+        bones[1].rotation.z = (Math.PI * angle) / 4;
+        bones[2].rotation.z = (Math.PI * angle) / 2;
+        bones[3].rotation.z = (Math.PI * angle) / 4;
+        bones[4].rotation.z = (Math.PI * angle) / 8;
+        bones[5].rotation.z = (Math.PI * angle) / 8;
+
+        let hatPos = new THREE.Vector3(faceMesh.position.x, faceMesh.position.y + 15, faceMesh.position.z);
+        hat.position.lerp(hatPos, speed);
+        hat.rotation.x = (Math.PI * angle) * 4;
+        hat.rotation.y = (Math.PI * angle) * 4;
+        hat.rotation.z = (Math.PI * angle) * 4;
+    }
+
+    // sound
+    const audioLoader = new THREE.AudioLoader();
+    const listener = new THREE.AudioListener();
+    const munyuAudio = new THREE.Audio(listener);
+    const amazinguAudio = new THREE.Audio(listener);
+
+    function loadSound() {
+        audioLoader.load(munyuSound, (buffer) => {
+            munyuAudio.setBuffer(buffer);
+            munyuAudio.setLoop(false);
+            munyuAudio.setVolume(1);
+        });
+        audioLoader.load(amazinguSound, (buffer) => {
+            amazinguAudio.setBuffer(buffer);
+            amazinguAudio.setLoop(false);
+            amazinguAudio.setVolume(1);
+        });
+    }
+
+    this.getListener = function(){
+        loadSound();
+        return listener;
+    }
+
+    this.playMunyu = function(){
+        if (munyuAudio.isPlaying) munyuAudio.stop();
+        munyuAudio.play();
+    }
+
+    this.playAmazingu = function(){
+        if (amazinguAudio.isPlaying) amazinguAudio.stop();
+        amazinguAudio.play();
     }
 }

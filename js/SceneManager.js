@@ -9,17 +9,23 @@ export default function SceneManager(canvas) {
     let HEIGHT = window.innerHeight;
     let WIDTH = window.innerWidth;
 
+    const light = createLights();
     const scene = createScene();
     const renderer = createRenderer();
     const camera = createCamera();
     const controls = createControl();
 
+    // audio
+    const listener = new THREE.AudioListener();
+
     // add const static base environment
     const block = new Block().getBlock(-20, 0, 0);
 
     // munyu
-    const munyu = new Munyu().getMunyu(0, 0, 0);
-    const munyu2 = new Munyu().getMunyu(20, 0, 0);
+    const Munyu1 = new Munyu();
+    const munyu1 = Munyu1.getMunyu(20, 0, 0);
+    const Munyu2 = new Munyu();
+    const munyu2 = Munyu2.getMunyu(40, 0, 0);
 
     function createScene() {
         const scene = new THREE.Scene();
@@ -59,10 +65,25 @@ export default function SceneManager(canvas) {
         return controls;
     }
 
+    function createLights(){
+        const ambientLight = new THREE.AmbientLight(0x333333, 0.5);
+        const directionalLight = new THREE.DirectionalLight(0xfff5d6, 1);
+        
+        let lights = [];
+        lights.push(ambientLight);
+        lights.push(directionalLight);
+
+        return lights;
+    }
+
     this.start = function () {
-        console.log("start", munyu);
+        console.log("start");
+        camera.add(Munyu1.getListener());
+        camera.add(Munyu2.getListener());
+        scene.add(light[0]);
+        scene.add(light[1]);
         scene.add(block);
-        scene.add(munyu);
+        scene.add(munyu1);
         scene.add(munyu2);
     }
 
@@ -72,6 +93,8 @@ export default function SceneManager(canvas) {
         // for(let i=0; i<sceneSubjects.length; i++)
         // 	sceneSubjects[i].update(elapsedTime);
 
+        Munyu1.idle(0.004);
+        Munyu2.idle(1);
         renderer.render(scene, camera);
     }
 
@@ -86,5 +109,10 @@ export default function SceneManager(canvas) {
         camera.updateProjectionMatrix();
 
         renderer.setSize(WIDTH, HEIGHT);
+    }
+
+    this.onMouseClick = function() {
+        Munyu1.playMunyu();
+        Munyu2.playAmazingu();
     }
 }
