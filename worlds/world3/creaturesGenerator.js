@@ -66,11 +66,9 @@ export default class Creature {
 
         this.hatGeo = new THREE.IcosahedronGeometry(1.5, 0);
         this.hatMat = new THREE.MeshBasicMaterial({
-            color: 0xe58b61,
+            color: 0xfffadd,
             side: THREE.DoubleSide,
-            flatShading: true,
-            transparent: true,
-            opacity: 0.5
+            flatShading: true
         });
 
         this.hat = new THREE.Mesh(this.hatGeo, this.hatMat);

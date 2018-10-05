@@ -48,11 +48,11 @@ export default function Munyu() {
 
     const hatGeo = new THREE.IcosahedronGeometry(1.5, 0);
     const hatMat = new THREE.MeshBasicMaterial({
-        color: 0xe58b61,
+        color: 0xfffadd,
         side: THREE.DoubleSide,
         flatShading: true,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.7
     });
 
     const hat = new THREE.Mesh(hatGeo, hatMat);
@@ -60,7 +60,7 @@ export default function Munyu() {
 
     const bodyGeo = new THREE.CylinderGeometry(5, 7, 15, 20, heightSegment);
     const bodyMat = new THREE.MeshBasicMaterial({
-        color: 0xe58b61,
+        color: 0xc36251,
         skinning: true
     });
 

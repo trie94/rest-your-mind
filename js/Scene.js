@@ -1,20 +1,23 @@
 import * as THREE from 'three';
 import Block from './Block';
 import Munyu from './Munyu';
+import { linearGrad } from './background';
 import bgm from '../assets/sounds/bgm.wav';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
-export default function SceneManager(canvas) {
+export default function Scene(canvas) {
 
     const clock = new THREE.Clock();
     let HEIGHT = window.innerHeight;
     let WIDTH = window.innerWidth;
 
+    // scene subjects
     const light = createLights();
     const scene = createScene();
     const renderer = createRenderer();
     const camera = createCamera();
     const controls = createControl();
+    const grad = linearGrad();
 
     // audio
     const listener = new THREE.AudioListener();
@@ -32,8 +35,6 @@ export default function SceneManager(canvas) {
 
     function createScene() {
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color("#d6eac5");
-
         return scene;
     }
 
@@ -68,10 +69,10 @@ export default function SceneManager(canvas) {
         return controls;
     }
 
-    function createLights(){
+    function createLights() {
         const ambientLight = new THREE.AmbientLight(0x333333, 0.5);
         const directionalLight = new THREE.DirectionalLight(0xfff5d6, 1);
-        
+
         let lights = [];
         lights.push(ambientLight);
         lights.push(directionalLight);
@@ -83,13 +84,19 @@ export default function SceneManager(canvas) {
         audioLoader.load(bgm, (buffer) => {
             bgmAudio.setBuffer(buffer);
             bgmAudio.setLoop(true),
-            bgmAudio.setVolume(0.3);
+                bgmAudio.setVolume(0.3);
             bgmAudio.play();
         });
     }
 
+    function addSceneSubjects(subject) {
+
+    }
+
     this.start = function () {
         console.log("start");
+        scene.add(grad);
+
         loadSound();
         camera.add(Munyu1.getListener());
         camera.add(Munyu2.getListener());
@@ -124,7 +131,7 @@ export default function SceneManager(canvas) {
         renderer.setSize(WIDTH, HEIGHT);
     }
 
-    this.onMouseClick = function() {
+    this.onMouseClick = function () {
         Munyu1.playMunyu();
         // Munyu2.playAmazingu();
     }

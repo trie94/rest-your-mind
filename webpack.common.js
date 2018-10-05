@@ -7,7 +7,7 @@ const glob = require('glob');
 
 console.log('globbing');
 let files = glob.sync('./worlds/**/index.js');
-files = files.map(function(file) {
+files = files.map(function (file) {
     let name = file;
     name = name.replace('/index.js', '');
     name = name.replace('./worlds/', '');
@@ -17,7 +17,7 @@ files = files.map(function(file) {
 files.push('index.html');
 console.log(files);
 
-const htmlPlugins = files.map(function(file) {
+const htmlPlugins = files.map(function (file) {
     return new HtmlWebpackPlugin({
         template: 'index.html',
         filename: file,
@@ -67,11 +67,19 @@ module.exports = {
         },
         {
             test: /\.(glsl|frag|vert)$/,
-            use: [
-                'glslify-loader',
-                'raw-loader'
-            ]
-        }]
+            exclude: /node_modules/,
+            use: {
+                loader: 'raw-loader'
+            }
+        },
+        {
+            test: /\.(glsl|frag|vert)$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'glslify-loader'
+            }
+        }
+        ]
     },
     plugins: [
         new CleanWebpackPlugin(['dist/*']),

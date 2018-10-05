@@ -1,5 +1,5 @@
 import './../style.scss';
-import SceneManager from './SceneManager';
+import Scene from './Scene';
 
 if (process.env.NODE_ENV !== 'production') { console.log("dev mode"); }
 let basename = process.env.NODE_ENV == 'production' ? "/rest-your-mind" : "/";
@@ -21,7 +21,7 @@ canvas.id = 'canvas';
 const root = document.getElementById('root');
 root.appendChild(canvas);
 
-const sceneManager = new SceneManager(canvas);
+const scene = new Scene(canvas);
 
 bindEventListeners();
 start();
@@ -36,18 +36,18 @@ function bindEventListeners() {
 function resizeCanvas() {
 	canvas.style.width = window.innerWidth;
 	canvas.style.height= window.innerHeight;
-    sceneManager.onWindowResize();
+    scene.onWindowResize();
 }
 
 function mouseClick() {
-    sceneManager.onMouseClick();
+    scene.onMouseClick();
 }
 
 function start() {
-    sceneManager.start();
+    scene.start();
 }
 
 function update() {
     requestAnimationFrame(update);
-    sceneManager.update();
+    scene.update();
 }
