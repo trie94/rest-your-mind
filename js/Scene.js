@@ -67,7 +67,8 @@ export default function Scene(canvas) {
     function createControl() {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.target = new THREE.Vector3(0, 15, 0);
-        controls.maxPolarAngle = Math.PI / 2;
+        // controls.maxPolarAngle = Math.PI / 2;
+        controls.maxDistance = 2000;
 
         return controls;
     }
