@@ -1,7 +1,8 @@
 varying vec2 vUv;
+varying vec3 localPosition;
 
 void main() {
     vUv = uv;
-    float depth = 1.;
-    gl_Position = vec4(position.xy, depth, 1.);
+    localPosition = position;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 }

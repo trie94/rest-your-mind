@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Block from './Block';
 import Munyu from './Munyu';
+import MunyuGenerator from './munyuGenerator';
 import { linearGrad } from './background';
 import bgm from '../assets/sounds/bgm.wav';
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -24,14 +25,16 @@ export default function Scene(canvas) {
     const audioLoader = new THREE.AudioLoader();
     const bgmAudio = new THREE.Audio(listener);
 
+    let sceneObjects = [];
+
     // add const static base environment
     const block = new Block().getBlock(-20, 0, 0);
 
     // munyu
-    const Munyu1 = new Munyu();
-    const munyu1 = Munyu1.getMunyu(20, 0, 0);
-    const Munyu2 = new Munyu();
-    const munyu2 = Munyu2.getMunyu(40, 0, 0);
+    const munyuGenerator = new MunyuGenerator();
+    const munyus = munyuGenerator.instantiate();
+    const pointVertex = munyuGenerator.getPos();
+    const speed = munyuGenerator.getSpeed();
 
     function createScene() {
         const scene = new THREE.Scene();
@@ -89,32 +92,32 @@ export default function Scene(canvas) {
         });
     }
 
-    function addSceneSubjects(subject) {
-
+    function addMunyus() {
+        for (let i = 0; i < munyus.length; i++) {
+            scene.add(munyus[i].getMunyu(pointVertex[i].x,pointVertex[i].z, pointVertex[i].y));
+        }
     }
 
     this.start = function () {
         console.log("start");
         scene.add(grad);
+        addMunyus();
 
         loadSound();
-        camera.add(Munyu1.getListener());
-        camera.add(Munyu2.getListener());
+        // camera.add(Munyu1.getListener());
+        // camera.add(Munyu2.getListener());
         scene.add(light[0]);
         scene.add(light[1]);
         scene.add(block);
-        scene.add(munyu1);
-        scene.add(munyu2);
     }
 
     this.update = function () {
         const elapsedTime = clock.getElapsedTime();
 
-        // for(let i=0; i<sceneSubjects.length; i++)
-        // 	sceneSubjects[i].update(elapsedTime);
-
-        Munyu1.idle(0.004);
-        Munyu2.idle(0.002);
+        // idle
+        for (let i = 0; i < munyus.length; i ++){
+            munyus[i].idle(speed[i]);
+        }
         renderer.render(scene, camera);
     }
 
@@ -132,7 +135,7 @@ export default function Scene(canvas) {
     }
 
     this.onMouseClick = function () {
-        Munyu1.playMunyu();
+        // Munyu1.playMunyu();
         // Munyu2.playAmazingu();
     }
 }
