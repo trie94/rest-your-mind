@@ -34,6 +34,7 @@ export default function Scene(canvas) {
     const munyus = munyuGenerator.instantiate();
     const pointVertex = munyuGenerator.getPos();
     const speed = munyuGenerator.getSpeed();
+    let targetPos = munyuGenerator.targetPos();
 
     function createScene() {
         const scene = new THREE.Scene();
@@ -94,7 +95,7 @@ export default function Scene(canvas) {
 
     function addMunyus() {
         for (let i = 0; i < munyus.length; i++) {
-            scene.add(munyus[i].getMunyu(pointVertex[i].x,pointVertex[i].z, pointVertex[i].y));
+            scene.add(munyus[i].getMunyu(pointVertex[i].x, pointVertex[i].y, pointVertex[i].z));
         }
     }
 
@@ -102,10 +103,6 @@ export default function Scene(canvas) {
         console.log("start");
         scene.add(grad);
         addMunyus();
-
-        // able to move munyu with this
-        munyus[0].move();
-        munyus[1].move();
 
         loadSound();
         // camera.add(Munyu1.getListener());
@@ -119,9 +116,10 @@ export default function Scene(canvas) {
         const elapsedTime = clock.getElapsedTime();
 
         // idle
-        for (let i = 0; i < munyus.length; i ++){
+        for (let i = 0; i < munyus.length; i++) {
             munyus[i].idle(speed[i]);
         }
+        munyus[0].move(targetPos[10], 0.01);
         renderer.render(scene, camera);
     }
 

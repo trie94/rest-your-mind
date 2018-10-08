@@ -170,10 +170,10 @@ export default function Munyu() {
         hat.rotation.z = (Math.PI * angle) * 4;
     }
 
-    this.move = function () {
-        // const time = Date.now() * speed;
-        // const angle = Math.cos(time) / 8;
-
+    this.move = function (targetPos, speed) {
+        const time = Date.now() * speed;
+        const angle = Math.cos(time) / 8;
+        munyu.position.lerp(targetPos, speed);
         console.log("move");
     }
 

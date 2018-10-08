@@ -55,7 +55,7 @@ export default function MunyuGenerator() {
         // point vertices
         for (let i = -config.width; i <= config.width; i += stepw) {
             for (let j = -config.height; j <= config.height; j += steph) {
-                pointGeo.vertices.push(new THREE.Vector3(i, j, 0));
+                pointGeo.vertices.push(new THREE.Vector3(i, 0, j));
             }
         }
     }
@@ -75,6 +75,7 @@ export default function MunyuGenerator() {
             pointVertex[i] = pointGeo.vertices[index];
             prevIndex = index;
         }
+        return pointVertex;
     }
 
     this.instantiate = function () {
@@ -91,8 +92,8 @@ export default function MunyuGenerator() {
     }
 
     this.targetPos = function () {
-        let RandomVertex = getRandomPos();
-        return RandomVertex;
+        let randomVertex = getRandomPos();
+        return randomVertex;
     }
 
     this.getSpeed = function () {
