@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import Block from './Block';
-import Munyu from './Munyu';
 import MunyuGenerator from './munyuGenerator';
 import { linearGrad } from './background';
 import bgm from '../assets/sounds/bgm.wav';
@@ -103,6 +102,10 @@ export default function Scene(canvas) {
         console.log("start");
         scene.add(grad);
         addMunyus();
+
+        // able to move munyu with this
+        munyus[0].move();
+        munyus[1].move();
 
         loadSound();
         // camera.add(Munyu1.getListener());

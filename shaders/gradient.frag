@@ -1,4 +1,3 @@
-varying vec2 vUv;
 varying vec3 localPosition;
 uniform vec3 uColorA;
 uniform vec3 uColorB;

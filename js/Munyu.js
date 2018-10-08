@@ -132,7 +132,6 @@ export default function Munyu() {
     }
 
     // animation
-    let state;
     const statesEnum = {
         IDLE: "IDLE",
         MOVE: "MOVE",
@@ -140,6 +139,7 @@ export default function Munyu() {
         WATCH: "WATCH",
         PRAY: "PRAY"
     };
+    let state = statesEnum.IDLE;
 
     this.getMunyu = function (x, y, z) {
         munyu.position.set(x, y, z);
@@ -151,6 +151,8 @@ export default function Munyu() {
     }
 
     this.idle = function (speed) {
+
+        // rotation
         const time = Date.now() * speed;
         const angle = Math.sin(time) / 8;
 
@@ -166,6 +168,13 @@ export default function Munyu() {
         hat.rotation.x = (Math.PI * angle) * 4;
         hat.rotation.y = (Math.PI * angle) * 4;
         hat.rotation.z = (Math.PI * angle) * 4;
+    }
+
+    this.move = function () {
+        // const time = Date.now() * speed;
+        // const angle = Math.cos(time) / 8;
+
+        console.log("move");
     }
 
     // sound

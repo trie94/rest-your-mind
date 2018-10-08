@@ -4,9 +4,14 @@ import Munyu from './Munyu';
 export default function MunyuGenerator() {
 
     let munyus = [];
-    let pointVertex = []; 
+    let pointVertex = [];
     let speed = [];
     const munyuNum = 30;
+    // each vertice point// each vertice point
+    const pointGeo = new THREE.Geometry();
+
+    createGrid();
+    getRandomPos();
 
     function createGrid() {
         // grid for generating random islands
@@ -26,9 +31,6 @@ export default function MunyuGenerator() {
         // line
         const gridObject = new THREE.Object3D();
         const gridGeo = new THREE.Geometry();
-
-        // each vertice point
-        const pointGeo = new THREE.Geometry();
 
         const stepw = 2 * config.width / config.widthSeg;
         const steph = 2 * config.height / config.heightSeg;
@@ -56,7 +58,10 @@ export default function MunyuGenerator() {
                 pointGeo.vertices.push(new THREE.Vector3(i, j, 0));
             }
         }
+    }
 
+    function getRandomPos() {
+        // push random vertices to the array
         let prevIndex = null;
         for (let i = 0; i < munyuNum; i++) {
 
@@ -76,17 +81,21 @@ export default function MunyuGenerator() {
         for (let i = 0; i < munyuNum; i++) {
             const munyu = new Munyu();
             munyus.push(munyu);
-            speed.push((Math.random()*0.005) + 0.001);
+            speed.push((Math.random() * 0.005) + 0.001);
         }
         return munyus;
     }
 
-    this.getPos = function() {
-        createGrid();
+    this.getPos = function () {
         return pointVertex;
     }
 
-    this.getSpeed = function() {
+    this.targetPos = function () {
+        let RandomVertex = getRandomPos();
+        return RandomVertex;
+    }
+
+    this.getSpeed = function () {
         return speed;
     }
 }
