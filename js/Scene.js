@@ -25,6 +25,7 @@ export default function Scene(canvas) {
     const bgmAudio = new THREE.Audio(listener);
 
     let sceneObjects = [];
+    let camPos = camera.position;
 
     // add const static base environment
     const block = new Block().getBlock(-20, 0, 0);
@@ -68,7 +69,7 @@ export default function Scene(canvas) {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.target = new THREE.Vector3(0, 15, 0);
         // controls.maxPolarAngle = Math.PI / 2;
-        controls.maxDistance = 2000;
+        controls.maxDistance = 1000;
 
         return controls;
     }
@@ -114,12 +115,14 @@ export default function Scene(canvas) {
 
     this.update = function () {
         const elapsedTime = clock.getElapsedTime();
+        camPos = camera.position;
 
         // idle
         for (let i = 0; i < munyus.length; i++) {
             munyus[i].idle(speed[i]);
+            munyus[i].setCameraPos(camPos);
         }
-        munyus[0].move(targetPos[10], 0.01);
+        // munyus[0].move(targetPos[10], 0.01);
         renderer.render(scene, camera);
     }
 

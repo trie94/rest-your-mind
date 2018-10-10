@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 import munyuSound from '../assets/sounds/munyu_basic.wav';
 import amazinguSound from '../assets/sounds/amazingu.wav';
+import fragShader from '../shaders/glow.frag';
+import vertexShader from '../shaders/glow.vert';
 
 export default function Munyu() {
 
     const faceObj = new THREE.Object3D();
     const heightSegment = 20;
+    let cameraPos = new THREE.Vector3(0, 200, 500);
 
     const eyeGeo = new THREE.SphereGeometry(0.7, 10, 10);
     const eyeMat = new THREE.MeshBasicMaterial({
@@ -46,7 +49,7 @@ export default function Munyu() {
     const faceMesh = new THREE.Mesh(faceGeo, faceMat);
     faceMesh.position.y = -5;
 
-    const hatGeo = new THREE.IcosahedronGeometry(1.5, 0);
+    const hatGeo = new THREE.SphereGeometry(1.5, 10, 10);
     const hatMat = new THREE.MeshBasicMaterial({
         color: 0xfffadd,
         side: THREE.DoubleSide,
@@ -55,7 +58,18 @@ export default function Munyu() {
         opacity: 0.7
     });
 
-    const hat = new THREE.Mesh(hatGeo, hatMat);
+    const glowingHatMat = new THREE.ShaderMaterial({
+        uniforms: {
+            mainColor: { type: "c", value: new THREE.Color(0xfffadd) },
+            rimColor: { type: "c", value: new THREE.Color(0xfffadd) }
+        },
+        vertexShader: vertexShader,
+        fragmentShader: fragShader,
+        transparent: true,
+        blending: THREE.AdditiveBlending
+    });
+
+    const hat = new THREE.Mesh(hatGeo, glowingHatMat);
     hat.position.set(0, 8, 0);
 
     const bodyGeo = new THREE.CylinderGeometry(5, 7, 15, 20, heightSegment);
@@ -177,6 +191,10 @@ export default function Munyu() {
         console.log("move");
     }
 
+    this.setCameraPos = function (camPos) {
+        cameraPos = camPos;
+    }
+
     // sound
     const audioLoader = new THREE.AudioLoader();
     const listener = new THREE.AudioListener();
@@ -196,17 +214,17 @@ export default function Munyu() {
         });
     }
 
-    this.getListener = function(){
+    this.getListener = function () {
         loadSound();
         return listener;
     }
 
-    this.playMunyu = function(){
+    this.playMunyu = function () {
         if (munyuAudio.isPlaying) munyuAudio.stop();
         munyuAudio.play();
     }
 
-    this.playAmazingu = function(){
+    this.playAmazingu = function () {
         if (amazinguAudio.isPlaying) amazinguAudio.stop();
         amazinguAudio.play();
     }
