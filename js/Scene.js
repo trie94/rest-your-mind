@@ -18,6 +18,7 @@ export default function Scene(canvas) {
     const camera = createCamera();
     const controls = createControl();
     const grad = linearGrad();
+    const camHelper = new THREE.CameraHelper(camera);
 
     // audio
     const listener = new THREE.AudioListener();
@@ -35,6 +36,7 @@ export default function Scene(canvas) {
     const munyus = munyuGenerator.instantiate();
     const pointVertex = munyuGenerator.getPos();
     const speed = munyuGenerator.getSpeed();
+    const color = munyuGenerator.getColor();
     let targetPos = munyuGenerator.targetPos();
 
     function createScene() {
@@ -48,6 +50,8 @@ export default function Scene(canvas) {
         renderer.setSize(WIDTH, HEIGHT);
         renderer.gammaInput = true;
         renderer.gammaOutput = true;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         return renderer;
     }
@@ -96,7 +100,7 @@ export default function Scene(canvas) {
 
     function addMunyus() {
         for (let i = 0; i < munyus.length; i++) {
-            scene.add(munyus[i].getMunyu(pointVertex[i].x, pointVertex[i].y, pointVertex[i].z));
+            scene.add(munyus[i].getMunyu(pointVertex[i].x, pointVertex[i].y, pointVertex[i].z, color[i]));
         }
     }
 
@@ -110,7 +114,7 @@ export default function Scene(canvas) {
         // camera.add(Munyu2.getListener());
         scene.add(light[0]);
         scene.add(light[1]);
-        scene.add(block);
+        // scene.add(block);
     }
 
     this.update = function () {

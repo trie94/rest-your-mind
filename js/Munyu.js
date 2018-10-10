@@ -155,8 +155,9 @@ export default function Munyu() {
     };
     let state = statesEnum.IDLE;
 
-    this.getMunyu = function (x, y, z) {
+    this.getMunyu = function (x, y, z, color) {
         munyu.position.set(x, y, z);
+        munyu.material.color = new THREE.Color(color);
         return munyu;
     }
 

@@ -5,10 +5,13 @@ export default function Block() {
     const blockGeo = new THREE.IcosahedronGeometry(10, 0);
     const blockMat = new THREE.MeshBasicMaterial({
         color: 0x6d7391,
-        flatShading: true
+        // flatShading: true
     });
 
     const concernMesh = new THREE.Mesh(blockGeo, blockMat);
+
+    concernMesh.castShadow = true; //default is false
+    concernMesh.receiveShadow = true; //default
     blockObj.add(concernMesh);
 
     this.getBlock = function (x, y, z) {
