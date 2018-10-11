@@ -18,8 +18,8 @@ export default function MunyuGenerator() {
     function createGrid() {
         // grid for generating random islands
         const config = {
-            height: 400,
-            width: 400,
+            height: 500,
+            width: 500,
             heightSeg: 50,
             widthSeg: 50,
             color: "black"
