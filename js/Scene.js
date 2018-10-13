@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import Block from './Block';
 import MunyuGenerator from './munyuGenerator';
-import { linearGrad } from './background';
+import skybox from './background';
 import bgm from '../assets/sounds/bgm.wav';
+import Environment from './environment';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 export default function Scene(canvas) {
@@ -17,7 +18,8 @@ export default function Scene(canvas) {
     const renderer = createRenderer();
     const camera = createCamera();
     const controls = createControl();
-    const grad = linearGrad();
+    const gradSkybox = skybox();
+    const environment = new Environment();
     const camHelper = new THREE.CameraHelper(camera);
 
     // audio
@@ -29,7 +31,7 @@ export default function Scene(canvas) {
     let camPos = camera.position;
 
     // add const static base environment
-    const block = new Block().getBlock(-20, 0, 0);
+    const block = new Block().getBlock();
 
     // munyu
     const munyuGenerator = new MunyuGenerator();
@@ -51,7 +53,7 @@ export default function Scene(canvas) {
         renderer.gammaInput = true;
         renderer.gammaOutput = true;
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.type = THREE.BasicShadowMap;
 
         return renderer;
     }
@@ -106,14 +108,17 @@ export default function Scene(canvas) {
 
     this.start = function () {
         console.log("start");
-        scene.add(grad);
+        scene.add(gradSkybox);
+        scene.add(block);
+        // scene.add(environment.getGround());
         addMunyus();
 
         loadSound();
         // camera.add(Munyu1.getListener());
         // camera.add(Munyu2.getListener());
-        scene.add(light[0]);
-        scene.add(light[1]);
+        // scene.add(light[0]);
+        // scene.add(light[1]);
+ 
         // scene.add(block);
     }
 

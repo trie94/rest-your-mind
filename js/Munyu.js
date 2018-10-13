@@ -60,7 +60,6 @@ export default function Munyu() {
 
     const glowingHatMat = new THREE.ShaderMaterial({
         uniforms: {
-            mainColor: { type: "c", value: new THREE.Color(0xfffadd) },
             rimColor: { type: "c", value: new THREE.Color(0xfffadd) }
         },
         vertexShader: vertexShader,

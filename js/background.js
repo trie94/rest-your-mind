@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import vertShader from '../shaders/gradient.vert';
 import fragShader from '../shaders/gradient.frag';
 
-export function linearGrad() {
+export default function skybox() {
     const gradObj = new THREE.Object3D();
     const gradMesh = new THREE.Mesh(
         new THREE.BoxGeometry(10000, 10000, 10000),

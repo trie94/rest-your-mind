@@ -1,4 +1,3 @@
-uniform vec3 mainColor;
 uniform vec3 rimColor;
 varying vec3 viewPos;
 varying vec3 viewNormal;
