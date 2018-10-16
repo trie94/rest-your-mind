@@ -26,7 +26,7 @@ export default function Block() {
     });
 
     mat.color.multiplyScalar(intensity);
-    const sphere = new THREE.Mesh(geo, shaderMat);
+    const sphere = new THREE.Mesh(geo, mat);
     pointLight.add(sphere);
 
     const texture = new THREE.CanvasTexture(generateTexture());
