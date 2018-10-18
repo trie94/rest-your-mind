@@ -132,7 +132,7 @@ export default function Munyu() {
     munyu.position.y = -10;
 
     // munyu shadow
-    const shadowGeo = new THREE.CircleGeometry(10, 20);
+    const shadowGeo = new THREE.CircleGeometry(9, 20);
     const shadowMat = new THREE.MeshBasicMaterial({
         color: 0x4b6ba4,
         side: THREE.DoubleSide,
@@ -140,8 +140,8 @@ export default function Munyu() {
     });
     const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
     shadowMesh.rotation.set(Math.PI / 2, 0, 0);
-    shadowMesh.position.set(0, 2, 0);
-    root.add(shadowMesh);
+    shadowMesh.position.set(0, -5, 0);
+    spine1.add(shadowMesh);
 
     // position before bind
     munyu.add(root);
