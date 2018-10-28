@@ -19,7 +19,6 @@ export default function Scene(canvas) {
     const camera = createCamera();
     const controls = createControl();
     const gradSkybox = skybox();
-    const environment = new Environment();
     const camHelper = new THREE.CameraHelper(camera);
 
     // audio
@@ -31,6 +30,7 @@ export default function Scene(canvas) {
     let camPos = camera.position;
 
     // add const static base environment
+    const ground = new Environment().getGround();
     const block = new Block().getBlock();
 
     // munyu
@@ -110,16 +110,15 @@ export default function Scene(canvas) {
         console.log("start");
         scene.add(gradSkybox);
         scene.add(block);
-        // scene.add(environment.getGround());
-        addMunyus();
+        block.position.set(0, 100, 0);
+        scene.add(ground);
 
-        loadSound();
+        addMunyus();
+        // loadSound();
         // camera.add(Munyu1.getListener());
         // camera.add(Munyu2.getListener());
         // scene.add(light[0]);
         // scene.add(light[1]);
- 
-        // scene.add(block);
     }
 
     this.update = function () {

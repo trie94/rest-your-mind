@@ -26,7 +26,7 @@ export default function Block() {
     });
 
     mat.color.multiplyScalar(intensity);
-    const sphere = new THREE.Mesh(geo, mat);
+    const sphere = new THREE.Mesh(geo, shaderMat);
     pointLight.add(sphere);
 
     const texture = new THREE.CanvasTexture(generateTexture());
@@ -38,10 +38,11 @@ export default function Block() {
     const outerSphereGeo = new THREE.SphereGeometry(100, 30, 30);
     const outerSphereMat = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
-        alphaMap: texture,
-        alphaTest: 0.5,
+        // alphaMap: texture,
+        // alphaTest: 0.5,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.5,
+        color: "black"
     });
     const outerSphere = new THREE.Mesh(outerSphereGeo, outerSphereMat);
 
@@ -59,7 +60,39 @@ export default function Block() {
         return canvas;
     }
 
-    this.getBlock = function(){
+    // particles
+    const particleMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 5,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        map: generateParticles(),
+        depthWrite: false
+    });
+
+    const cloud = new THREE.Points(outerSphereGeo, particleMat);
+    // pointLight.add(cloud);
+
+    function generateParticles() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+
+        var context = canvas.getContext('2d');
+        var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.2, 'rgba(0,255,255,1)');
+        gradient.addColorStop(0.4, 'rgba(0,0,64,1)');
+        gradient.addColorStop(1, 'rgba(0,0,0,1)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        return texture;
+    }
+
+    this.getBlock = function () {
         return pointLight;
     }
 }

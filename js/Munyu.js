@@ -134,7 +134,7 @@ export default function Munyu() {
     // munyu shadow
     const shadowGeo = new THREE.CircleGeometry(9, 20);
     const shadowMat = new THREE.MeshBasicMaterial({
-        color: 0x4b6ba4,
+        color: 0x7e9dd3,
         side: THREE.DoubleSide,
         blending: THREE.MultiplyBlending
     });
