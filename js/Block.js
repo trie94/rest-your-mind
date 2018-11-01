@@ -3,6 +3,7 @@ import * as THREE from 'three';
 export default function Block() {
     let intensity = 1.5;
     const pointLight = new THREE.PointLight(0xfbffe0, intensity);
+    let time;
     // pointLight.shadow.bias = -0.5;
 
     const geo = new THREE.SphereGeometry(50, 30, 30);
@@ -36,15 +37,23 @@ export default function Block() {
     texture.repeat.set(1, 5);
 
     const outerSphereGeo = new THREE.SphereGeometry(100, 30, 30);
-    const outerSphereMat = new THREE.MeshPhongMaterial({
-        side: THREE.DoubleSide,
-        // alphaMap: texture,
-        // alphaTest: 0.5,
-        transparent: true,
-        opacity: 0.5,
-        color: "black"
+    this.outerSphereMat = new THREE.ShaderMaterial({
+        uniforms: {
+            rimColor: { type: "c", value: new THREE.Color(0x1b1823) },
+            height: { type: "f", value: 0.5 },
+            time: { type: "f", value: 0.0 },
+        },
+        vertexShader: require('../shaders/shell.vert'),
+        fragmentShader: require('../shaders/shell.frag'),
+        // side: THREE.DoubleSide,
+        // transparent: true,
+        // opacity: 0.9,
+        // blending: THREE.AdditiveBlending,
+        // depthWrite: false,
+        // wireframe: true,
     });
-    const outerSphere = new THREE.Mesh(outerSphereGeo, outerSphereMat);
+
+    const outerSphere = new THREE.Mesh(outerSphereGeo, this.outerSphereMat);
 
     outerSphere.castShadow = true;
     outerSphere.receiveShadow = true;
@@ -94,5 +103,10 @@ export default function Block() {
 
     this.getBlock = function () {
         return pointLight;
+    }
+
+    this.update = function () {
+        time = Date.now() / 1000 % 120000;
+        this.outerSphereMat.uniforms.time.value = time;
     }
 }

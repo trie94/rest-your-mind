@@ -31,7 +31,8 @@ export default function Scene(canvas) {
 
     // add const static base environment
     const ground = new Environment().getGround();
-    const block = new Block().getBlock();
+    const block = new Block();
+    const block1 = block.getBlock();
 
     // munyu
     const munyuGenerator = new MunyuGenerator();
@@ -109,8 +110,8 @@ export default function Scene(canvas) {
     this.start = function () {
         console.log("start");
         scene.add(gradSkybox);
-        scene.add(block);
-        block.position.set(0, 100, 0);
+        scene.add(block1);
+        block1.position.set(0, 100, 0);
         scene.add(ground);
 
         addMunyus();
@@ -131,6 +132,7 @@ export default function Scene(canvas) {
             munyus[i].setCameraPos(camPos);
         }
         // munyus[0].move(targetPos[10], 0.01);
+        block.update();
         renderer.render(scene, camera);
     }
 
