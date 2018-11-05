@@ -23,7 +23,7 @@ export default function Block() {
         fragmentShader: require('../shaders/glow.frag'),
         transparent: true,
         blending: THREE.AdditiveBlending,
-        depthWrite: false,
+        depthWrite: false
     });
 
     mat.color.multiplyScalar(intensity);
@@ -39,7 +39,7 @@ export default function Block() {
     const outerSphereGeo = new THREE.SphereGeometry(100, 30, 30);
     this.outerSphereMat = new THREE.ShaderMaterial({
         uniforms: {
-            rimColor: { type: "c", value: new THREE.Color(0x1b1823) },
+            color: { type: "c", value: new THREE.Color(0x1b1823) },
             height: { type: "f", value: 0.5 },
             time: { type: "f", value: 0.0 },
         },
@@ -47,7 +47,7 @@ export default function Block() {
         fragmentShader: require('../shaders/shell.frag'),
         // side: THREE.DoubleSide,
         // transparent: true,
-        // opacity: 0.9,
+        // opacity: 0.5,
         // blending: THREE.AdditiveBlending,
         // depthWrite: false,
         // wireframe: true,

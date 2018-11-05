@@ -1,13 +1,5 @@
-uniform vec3 color;
 varying vec3 viewPos;
 varying vec3 viewNormal;
-varying vec3 worldNormal;
-varying vec3 worldPos;
-varying vec3 objectPos;
-
-uniform float height;
-uniform float time;
-
 
 vec3 mod289(vec3 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -101,22 +93,12 @@ float snoise(vec3 v)
                                 dot(p2,x2), dot(p3,x3) ) );
   }
 
-void main() {
-    // gl_FragColor = vec4(normalize(viewNormal) * 0.5 + 0.5, 1.0);
-    // gl_FragColor = vec4(normalize(viewPos) * 0.5 + 0.5, 1.0);
-    // if (objectPos.y > height) discard;
-    // float noise = snoise(vec3(objectPos.xz * 0.02, time * 0.3));
-    // noise = noise * 0.5 + 0.5;
-    // gl_FragColor = vec4(noise, noise, noise, 1.0);
-    // return;
-    float rim = clamp(dot(normalize(viewNormal), normalize(-viewPos)), 0.0, 1.0);
-    rim = pow(rim, 3.0);
-    float light = clamp(dot(normalize(vec3(0.0, 1.0, 0.0)), worldNormal), 0.0, 1.0);
-    vec3 ambient = vec3(0.1, 0.0, 0.2);
-    // rim = 1.0 - rim;
-    // vec3 color = mix(mainColor, color, rim);
-    // gl_FragColor = vec4(color * light + ambient, 0.9);
-    gl_FragColor = vec4(color * light + ambient * 0.5, 0.9);
-    // gl_FragColor = vec4(color, 1.0);
-    // gl_FragColor = vec4(glow, 1.0);
+
+void main()
+{
+    vec4 viewPosition = modelViewMatrix * vec4( position, 1.0 );
+    viewPos = viewPosition.xyz;
+    vec3 vNormal = normalize(normalMatrix * normal);
+    viewNormal = vNormal;
+    gl_Position = projectionMatrix * viewPosition;
 }

@@ -4,6 +4,7 @@ import MunyuGenerator from './munyuGenerator';
 import skybox from './background';
 import bgm from '../assets/sounds/bgm.wav';
 import Environment from './environment';
+import Concern from './Concern';
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 export default function Scene(canvas) {
@@ -33,6 +34,7 @@ export default function Scene(canvas) {
     const ground = new Environment().getGround();
     const block = new Block();
     const block1 = block.getBlock();
+    const concern = new Concern();
 
     // munyu
     const munyuGenerator = new MunyuGenerator();
@@ -110,9 +112,13 @@ export default function Scene(canvas) {
     this.start = function () {
         console.log("start");
         scene.add(gradSkybox);
-        scene.add(block1);
-        block1.position.set(0, 100, 0);
-        scene.add(ground);
+        // scene.add(block1);
+        // block1.position.set(0, 100, 0);
+        // scene.add(ground);
+
+        scene.add(concern.getConcern());
+        concern.getConcern().position.set(0, 100, 0);
+
 
         addMunyus();
         // loadSound();
