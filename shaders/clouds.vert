@@ -3,6 +3,9 @@ varying vec3 viewNormal;
 varying vec3 worldPos;
 varying vec3 worldNormal;
 
+uniform float scale;
+uniform float time;
+
 vec3 mod289(vec3 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
@@ -98,11 +101,27 @@ float snoise(vec3 v)
 
 void main()
 {
-    vec4 viewPosition = modelViewMatrix * vec4( position, 1.0 );
+    vec3 pos = position;
+    worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+    worldNormal = normalize(mat3(modelMatrix) * normal);
+    
+    float moveSpeedX = time * 0.5;
+    float moveSpeedY = time * 0.3;
+    float moveSpeedZ = time * 0.2;
+
+    float xs = scale * snoise(vec3(worldNormal.xy * scale, moveSpeedX));
+    float ys = scale * snoise(vec3(worldNormal.xy * scale, moveSpeedY));
+    float zs = scale * snoise(vec3(worldNormal.xy * scale, moveSpeedZ));
+
+    pos.x = pos.x + xs;
+    pos.y = pos.y + ys;
+    pos.z = pos.z + zs;
+    
+    vec4 viewPosition = modelViewMatrix * vec4( pos, 1.0 );
     viewPos = viewPosition.xyz;
     vec3 vNormal = normalize(normalMatrix * normal);
     viewNormal = vNormal;
-    worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+   
     worldNormal = normalize(mat3(modelMatrix) * normal);
     gl_Position = projectionMatrix * viewPosition;
 }

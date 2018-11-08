@@ -35,6 +35,7 @@ export default function Scene(canvas) {
     const block = new Block();
     const block1 = block.getBlock();
     const concern = new Concern();
+    const concernMesh = concern.getConcern();
 
     // munyu
     const munyuGenerator = new MunyuGenerator();
@@ -116,10 +117,8 @@ export default function Scene(canvas) {
         // block1.position.set(0, 100, 0);
         // scene.add(ground);
 
-        scene.add(concern.getConcern());
-        concern.getConcern().position.set(0, 100, 0);
-
-
+        scene.add(concernMesh);
+        concernMesh.position.set(0, 100, 0);
         addMunyus();
         // loadSound();
         // camera.add(Munyu1.getListener());
@@ -139,6 +138,7 @@ export default function Scene(canvas) {
         }
         // munyus[0].move(targetPos[10], 0.01);
         block.update();
+        concern.update();
         renderer.render(scene, camera);
     }
 

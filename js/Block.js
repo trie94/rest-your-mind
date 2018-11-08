@@ -39,7 +39,7 @@ export default function Block() {
     const outerSphereGeo = new THREE.SphereGeometry(100, 30, 30);
     this.outerSphereMat = new THREE.ShaderMaterial({
         uniforms: {
-            color: { type: "c", value: new THREE.Color(0x1b1823) },
+            color: { type: "c", value: new THREE.Color(0x66ccbb) },
             height: { type: "f", value: 0.5 },
             time: { type: "f", value: 0.0 },
         },
@@ -48,7 +48,7 @@ export default function Block() {
         // side: THREE.DoubleSide,
         // transparent: true,
         // opacity: 0.5,
-        // blending: THREE.AdditiveBlending,
+        // blending: THREE.MultiplyBlending,
         // depthWrite: false,
         // wireframe: true,
     });

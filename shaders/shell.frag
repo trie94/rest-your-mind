@@ -102,21 +102,9 @@ float snoise(vec3 v)
   }
 
 void main() {
-    // gl_FragColor = vec4(normalize(viewNormal) * 0.5 + 0.5, 1.0);
-    // gl_FragColor = vec4(normalize(viewPos) * 0.5 + 0.5, 1.0);
-    // if (objectPos.y > height) discard;
-    // float noise = snoise(vec3(objectPos.xz * 0.02, time * 0.3));
-    // noise = noise * 0.5 + 0.5;
-    // gl_FragColor = vec4(noise, noise, noise, 1.0);
-    // return;
-    float rim = clamp(dot(normalize(viewNormal), normalize(-viewPos)), 0.0, 1.0);
-    rim = pow(rim, 3.0);
-    float light = clamp(dot(normalize(vec3(0.0, 1.0, 0.0)), worldNormal), 0.0, 1.0);
-    vec3 ambient = vec3(0.1, 0.0, 0.2);
-    // rim = 1.0 - rim;
-    // vec3 color = mix(mainColor, color, rim);
-    // gl_FragColor = vec4(color * light + ambient, 0.9);
-    gl_FragColor = vec4(color * light + ambient * 0.5, 0.9);
-    // gl_FragColor = vec4(color, 1.0);
+    float light = clamp(dot(normalize(vec3(0.0, 2.0, 0.0)), worldNormal), 0.0, 1.0);
+    vec3 ambient = vec3(0.1, 0.0, 0.1);
+    gl_FragColor = vec4(color * light + ambient * 0.1, 0.9);
+    // gl_FragColor = vec4(color * light, 1.0);
     // gl_FragColor = vec4(glow, 1.0);
 }
