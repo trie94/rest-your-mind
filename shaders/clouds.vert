@@ -1,5 +1,7 @@
 varying vec3 viewPos;
 varying vec3 viewNormal;
+varying vec3 worldPos;
+varying vec3 worldNormal;
 
 vec3 mod289(vec3 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -100,5 +102,7 @@ void main()
     viewPos = viewPosition.xyz;
     vec3 vNormal = normalize(normalMatrix * normal);
     viewNormal = vNormal;
+    worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+    worldNormal = normalize(mat3(modelMatrix) * normal);
     gl_Position = projectionMatrix * viewPosition;
 }
