@@ -4,12 +4,13 @@ export default function Concern() {
     let time;
     const concernObj = new THREE.Object3D();
 
-    const concernGeo = new THREE.SphereGeometry(85, 30, 30);
+    const concernGeo = new THREE.SphereGeometry(85, 50, 50);
     this.concernMat = new THREE.ShaderMaterial({
         uniforms: {
             color: { type: "c", value: new THREE.Color(0xfbffe0) },
             rimColor: { type: "c", value: new THREE.Color(0x555a63) },
             scale: { type: "f", value: 10 },
+            freq: { type: "f", value: 1.5 },
             time: { type: "f", value: 0.0 },
             rimPower: { type: "f", value: 2 }
         },
@@ -19,7 +20,25 @@ export default function Concern() {
         blending: THREE.AdditiveBlending,
         depthWrite: false
     });
-    
+
+    // angled one
+    // const concernGeo = new THREE.SphereGeometry(85, 30, 30);
+    // this.concernMat = new THREE.ShaderMaterial({
+    //     uniforms: {
+    //         color: { type: "c", value: new THREE.Color(0xfbffe0) },
+    //         rimColor: { type: "c", value: new THREE.Color(0x555a63) },
+    //         scale: { type: "f", value: 10 },
+    //         freq: { type: "f", value: 10 },
+    //         time: { type: "f", value: 0.0 },
+    //         rimPower: { type: "f", value: 2 }
+    //     },
+    //     vertexShader: require('../shaders/clouds.vert'),
+    //     fragmentShader: require('../shaders/clouds.frag'),
+    //     transparent: true,
+    //     blending: THREE.AdditiveBlending,
+    //     depthWrite: false
+    // });
+
     const mainConcernMesh = new THREE.Mesh(concernGeo, this.concernMat);
     concernObj.add(mainConcernMesh);
 
@@ -42,7 +61,7 @@ export default function Concern() {
     const concernMeshLayer = new THREE.Mesh(concernGeoLayer, this.concernMatLayer);
     concernObj.add(concernMeshLayer);
 
-    const concernGeoLayer2 = new THREE.SphereGeometry(110, 30, 30);
+    const concernGeoLayer2 = new THREE.SphereGeometry(110, 80, 80);
     this.concernMatLayer2 = new THREE.ShaderMaterial({
         uniforms: {
             color: { type: "c", value: new THREE.Color(0x181c23) },

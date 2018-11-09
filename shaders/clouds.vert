@@ -4,6 +4,7 @@ varying vec3 worldPos;
 varying vec3 worldNormal;
 
 uniform float scale;
+uniform float freq;
 uniform float time;
 
 vec3 mod289(vec3 x) {
@@ -109,9 +110,9 @@ void main()
     float moveSpeedY = time * 0.3;
     float moveSpeedZ = time * 0.2;
 
-    float xs = scale * snoise(vec3(worldNormal.xy * scale, moveSpeedX));
-    float ys = scale * snoise(vec3(worldNormal.xy * scale, moveSpeedY));
-    float zs = scale * snoise(vec3(worldNormal.xy * scale, moveSpeedZ));
+    float xs = scale * snoise(vec3(worldNormal.xy * freq, moveSpeedX));
+    float ys = scale * snoise(vec3(worldNormal.yz * freq, moveSpeedY));
+    float zs = scale * snoise(vec3(worldNormal.xz * freq, moveSpeedZ));
 
     pos.x = pos.x + xs;
     pos.y = pos.y + ys;
