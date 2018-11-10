@@ -23,7 +23,7 @@ export default function Concern() {
     });
 
     const softConcernMesh = new THREE.Mesh(softConcernGeo, this.softConcernMat);
-    concernObj.add(softConcernMesh);
+    // concernObj.add(softConcernMesh);
 
     // angled one
     const angledConcernGeo = new THREE.SphereGeometry(85, 30, 30);
@@ -34,7 +34,7 @@ export default function Concern() {
             scale: { type: "f", value: 10 },
             freq: { type: "f", value: 10 },
             time: { type: "f", value: 0.0 },
-            rimPower: { type: "f", value: 3 }
+            rimPower: { type: "f", value: 2 }
         },
         vertexShader: require('../shaders/clouds.vert'),
         fragmentShader: require('../shaders/clouds.frag'),
