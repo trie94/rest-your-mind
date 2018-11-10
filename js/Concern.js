@@ -4,15 +4,37 @@ export default function Concern() {
     let time;
     const concernObj = new THREE.Object3D();
 
-    const concernGeo = new THREE.SphereGeometry(85, 50, 50);
-    this.concernMat = new THREE.ShaderMaterial({
+    const softConcernGeo = new THREE.SphereGeometry(95, 50, 50);
+    this.softConcernMat = new THREE.ShaderMaterial({
         uniforms: {
             color: { type: "c", value: new THREE.Color(0xfbffe0) },
             rimColor: { type: "c", value: new THREE.Color(0x555a63) },
             scale: { type: "f", value: 10 },
             freq: { type: "f", value: 1.5 },
             time: { type: "f", value: 0.0 },
-            rimPower: { type: "f", value: 2 }
+            rimPower: { type: "f", value: 3 }
+        },
+        vertexShader: require('../shaders/clouds.vert'),
+        fragmentShader: require('../shaders/clouds.frag'),
+        transparent: true,
+        // blending: THREE.MultiplyBlending,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    const softConcernMesh = new THREE.Mesh(softConcernGeo, this.softConcernMat);
+    concernObj.add(softConcernMesh);
+
+    // angled one
+    const angledConcernGeo = new THREE.SphereGeometry(85, 30, 30);
+    this.angledConcernMat = new THREE.ShaderMaterial({
+        uniforms: {
+            color: { type: "c", value: new THREE.Color(0xfbffe0) },
+            rimColor: { type: "c", value: new THREE.Color(0x555a63) },
+            scale: { type: "f", value: 10 },
+            freq: { type: "f", value: 10 },
+            time: { type: "f", value: 0.0 },
+            rimPower: { type: "f", value: 3 }
         },
         vertexShader: require('../shaders/clouds.vert'),
         fragmentShader: require('../shaders/clouds.frag'),
@@ -21,26 +43,8 @@ export default function Concern() {
         depthWrite: false
     });
 
-    // angled one
-    // const concernGeo = new THREE.SphereGeometry(85, 30, 30);
-    // this.concernMat = new THREE.ShaderMaterial({
-    //     uniforms: {
-    //         color: { type: "c", value: new THREE.Color(0xfbffe0) },
-    //         rimColor: { type: "c", value: new THREE.Color(0x555a63) },
-    //         scale: { type: "f", value: 10 },
-    //         freq: { type: "f", value: 10 },
-    //         time: { type: "f", value: 0.0 },
-    //         rimPower: { type: "f", value: 2 }
-    //     },
-    //     vertexShader: require('../shaders/clouds.vert'),
-    //     fragmentShader: require('../shaders/clouds.frag'),
-    //     transparent: true,
-    //     blending: THREE.AdditiveBlending,
-    //     depthWrite: false
-    // });
-
-    const mainConcernMesh = new THREE.Mesh(concernGeo, this.concernMat);
-    concernObj.add(mainConcernMesh);
+    const angledConcernMesh = new THREE.Mesh(angledConcernGeo, this.angledConcernMat);
+    concernObj.add(angledConcernMesh);
 
     const concernGeoLayer = new THREE.SphereGeometry(50, 30, 30);
     this.concernMatLayer = new THREE.ShaderMaterial({
@@ -77,7 +81,7 @@ export default function Concern() {
         depthWrite: false
     });
 
-    const concernMeshLayer2 = new THREE.Mesh(concernGeoLayer2, this.concernMatLayer2);
+    // const concernMeshLayer2 = new THREE.Mesh(concernGeoLayer2, this.concernMatLayer2);
     // concernObj.add(concernMeshLayer2);
 
     this.getConcern = function () {
@@ -86,7 +90,8 @@ export default function Concern() {
 
     this.update = function () {
         time = Date.now() / 1000 % 120000;
-        this.concernMat.uniforms.time.value = time;
+        this.softConcernMat.uniforms.time.value = time;
+        this.angledConcernMat.uniforms.time.value = time;
         this.concernMatLayer.uniforms.time.value = time;
         this.concernMatLayer.uniforms.scale.value = time * 0.0001;
     }
