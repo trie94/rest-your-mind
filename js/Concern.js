@@ -23,7 +23,7 @@ export default function Concern() {
     });
 
     const softConcernMesh = new THREE.Mesh(softConcernGeo, this.softConcernMat);
-    // concernObj.add(softConcernMesh);
+    concernObj.add(softConcernMesh);
 
     // angled one
     const angledConcernGeo = new THREE.SphereGeometry(85, 30, 30);
@@ -44,7 +44,7 @@ export default function Concern() {
     });
 
     const angledConcernMesh = new THREE.Mesh(angledConcernGeo, this.angledConcernMat);
-    concernObj.add(angledConcernMesh);
+    // concernObj.add(angledConcernMesh);
 
     const concernGeoLayer = new THREE.SphereGeometry(50, 30, 30);
     this.concernMatLayer = new THREE.ShaderMaterial({
