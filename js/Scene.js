@@ -6,6 +6,9 @@ import bgm from '../assets/sounds/bgm.wav';
 import Environment from './environment';
 import Concern from './Concern';
 const OrbitControls = require('three-orbit-controls')(THREE);
+// import ParticleEngine from './ParticleEngine';
+// import Particle from './Particle';
+import ParticleGenerator from './ParticleGenerator';
 
 export default function Scene(canvas) {
 
@@ -21,6 +24,8 @@ export default function Scene(canvas) {
     const controls = createControl();
     const gradSkybox = skybox();
     const camHelper = new THREE.CameraHelper(camera);
+    // const particleEngine = new ParticleEngine();
+    const particleGenerator = new ParticleGenerator();
 
     // audio
     const listener = new THREE.AudioListener();
@@ -140,6 +145,7 @@ export default function Scene(canvas) {
         block.update();
         concern.update();
         renderer.render(scene, camera);
+        particleGenerator.update();
     }
 
     this.onWindowResize = function () {
