@@ -208,13 +208,16 @@ THREE.GPUParticleSystem = function(options) {
 	};
 
 	var textureLoader = new THREE.TextureLoader();
+	var perlinNoise = require("../assets/perlin-512.png");
+	var particleImg = require("../assets/particle2.png");
+	var particleImg2 = require("../assets/particleS2.png");
 
 	// perlin texture used to drive turbulence
-	self.particleNoiseTex = self.PARTICLE_NOISE_TEXTURE || textureLoader.load("../assets/perlin-512.png");
+	self.particleNoiseTex = self.PARTICLE_NOISE_TEXTURE || textureLoader.load(perlinNoise);
 	self.particleNoiseTex.wrapS = self.particleNoiseTex.wrapT = THREE.RepeatWrapping;
 
 	// sprite texture rendered for each particle
-	self.particleSpriteTex = self.PARTICLE_SPRITE_TEXTURE || textureLoader.load("../assets/particle2.png");
+	self.particleSpriteTex = self.PARTICLE_SPRITE_TEXTURE || textureLoader.load(particleImg);
 	self.particleSpriteTex.wrapS = self.particleSpriteTex.wrapT = THREE.RepeatWrapping;
 
 	// particle system shader material definition

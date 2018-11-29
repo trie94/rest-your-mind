@@ -9,7 +9,7 @@ export default function skybox() {
         new THREE.ShaderMaterial({
             uniforms: {
                 uColorA: { value: new THREE.Color(0x4b6ba4) },
-                uColorB: { value: new THREE.Color(0x0c1e36) }
+                uColorB: { value: new THREE.Color(0x151628) }
             },
             vertexShader: vertShader,
             fragmentShader: fragShader,

@@ -74,8 +74,8 @@ export default function Scene(canvas) {
         const farPlane = 10000;
         const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
 
-        camera.position.set(0, 200, 500);
-        camera.lookAt(new THREE.Vector3());
+        camera.position.set(0, 0, 700);
+        camera.lookAt(new THREE.Vector3(0, 100, 0));
 
         return camera;
     }
@@ -118,12 +118,10 @@ export default function Scene(canvas) {
     this.start = function () {
         console.log("start");
         scene.add(gradSkybox);
-        // scene.add(block1);
-        // block1.position.set(0, 100, 0);
-        // scene.add(ground);
-
         scene.add(concernMesh);
         concernMesh.position.set(0, 100, 0);
+        scene.add(particleGenerator.particleSystem);
+        particleGenerator.particleSystem.position.set(0, 100, 0);
         addMunyus();
         // loadSound();
         // camera.add(Munyu1.getListener());
@@ -133,7 +131,6 @@ export default function Scene(canvas) {
     }
 
     this.update = function () {
-        const elapsedTime = clock.getElapsedTime();
         camPos = camera.position;
 
         // idle
@@ -144,8 +141,8 @@ export default function Scene(canvas) {
         // munyus[0].move(targetPos[10], 0.01);
         block.update();
         concern.update();
-        renderer.render(scene, camera);
         particleGenerator.update();
+        renderer.render(scene, camera);
     }
 
     this.onWindowResize = function () {

@@ -57,7 +57,7 @@ export default function MunyuGenerator() {
         // point vertices
         for (let i = -config.width; i <= config.width; i += stepw) {
             for (let j = -config.height; j <= config.height; j += steph) {
-                pointGeo.vertices.push(new THREE.Vector3(i, 0, j));
+                pointGeo.vertices.push(new THREE.Vector3(i, -100, j));
             }
         }
     }
